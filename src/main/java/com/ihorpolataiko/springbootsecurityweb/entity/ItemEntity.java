@@ -1,17 +1,20 @@
 package com.ihorpolataiko.springbootsecurityweb.entity;
 
 import com.ihorpolataiko.springbootsecurityweb.common.ItemState;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 // ToDo created and updated dates
 @Data
 @Entity
 public class ItemEntity {
 
-  @Id private String id;
+  @Id
+  @GeneratedValue(generator = "system-uuid")
+  @GenericGenerator(name = "system-uuid", strategy = "uuid")
+  private String id;
 
   private String data;
 
@@ -22,4 +25,17 @@ public class ItemEntity {
   private ZonedDateTime createdDate;
 
   private ZonedDateTime updatedDate;
+
+  @PrePersist
+  public void onPrePersist() {
+
+    createdDate = ZonedDateTime.now();
+    updatedDate = ZonedDateTime.now();
+  }
+
+  @PreUpdate
+  public void onPreUpdate() {
+
+    updatedDate = ZonedDateTime.now();
+  }
 }

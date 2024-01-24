@@ -5,13 +5,17 @@ import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
-// ToDo created and updated dates
 @Data
 @Entity
 public class UserEntity {
 
-  @Id private String id;
+  // ToDo find  strategy = "uuid" is deprecated
+  @Id
+  @GeneratedValue(generator = "system-uuid")
+  @GenericGenerator(name = "system-uuid", strategy = "uuid")
+  private String id;
 
   private String username;
 
@@ -30,4 +34,17 @@ public class UserEntity {
   private ZonedDateTime createdDate;
 
   private ZonedDateTime updatedDate;
+
+  @PrePersist
+  public void onPrePersist() {
+
+    createdDate = ZonedDateTime.now();
+    updatedDate = ZonedDateTime.now();
+  }
+
+  @PreUpdate
+  public void onPreUpdate() {
+
+    updatedDate = ZonedDateTime.now();
+  }
 }
