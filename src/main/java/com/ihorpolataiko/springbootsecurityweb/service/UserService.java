@@ -6,12 +6,16 @@ import com.ihorpolataiko.springbootsecurityweb.dto.user.UserPasswordUpdateReques
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponse;
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserUpdateRequest;
 import com.ihorpolataiko.springbootsecurityweb.entity.UserEntity;
+import com.ihorpolataiko.springbootsecurityweb.exception.NoAccessException;
+import com.ihorpolataiko.springbootsecurityweb.exception.NotFoundException;
 import com.ihorpolataiko.springbootsecurityweb.mapper.UserMapper;
 import com.ihorpolataiko.springbootsecurityweb.repository.UserRepository;
 import com.ihorpolataiko.springbootsecurityweb.security.AuthUser;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,16 +25,20 @@ public class UserService {
 
   private final UserMapper userMapper;
 
-  public UserService(UserRepository userRepository, UserMapper userMapper) {
+  private final PasswordEncoder passwordEncoder;
+
+  public UserService(
+      UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
     this.userMapper = userMapper;
+    this.passwordEncoder = passwordEncoder;
   }
 
   public UserResponse createUser(UserCreateRequest userCreateRequest) {
 
     UserEntity userEntity = new UserEntity();
     userEntity.setUsername(userCreateRequest.username());
-    userEntity.setPasswordHash(userCreateRequest.password()); // ToDo, convert to hash
+    userEntity.setPasswordHash(passwordEncoder.encode(userCreateRequest.password()));
     userEntity.setFirstName(userCreateRequest.firstName());
     userEntity.setLastName(userCreateRequest.lastName());
     userEntity.setRoles(List.of(Role.USER));
@@ -46,8 +54,8 @@ public class UserService {
 
     UserEntity userEntity = getUserEntity(authUser.userId());
 
-    // ToDo Ihor StringUtils
-    if (!userEntity.getPasswordHash().equals(passwordUpdateRequest.oldPassword())) {
+    if (passwordEncoder.matches(
+        passwordUpdateRequest.oldPassword(), userEntity.getPasswordHash())) {
       throw new RuntimeException("Old password is incorrect");
     }
 
@@ -110,16 +118,16 @@ public class UserService {
 
   private UserEntity getUserEntity(String userId) {
 
-    // ToDo use custom exception
-    return userRepository.findById(userId).orElseThrow();
+    return userRepository.findById(userId).orElseThrow(NotFoundException::new);
   }
 
   // for this method security responsibilities is scattered between controller and service
   private void checkAccessToUser(AuthUser authUser, UserEntity userEntity) {
 
-    // ToDo use StringUtils.equals()
-    if (authUser.role() != Role.ADMIN && !userEntity.getId().equals(authUser.userId())) {
-      throw new RuntimeException("No access");
+    if (authUser.role() != Role.ADMIN
+        && !StringUtils.equals(userEntity.getId(), authUser.userId())) {
+
+      throw new NoAccessException();
     }
   }
 }

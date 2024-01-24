@@ -5,9 +5,12 @@ import com.ihorpolataiko.springbootsecurityweb.common.Role;
 import com.ihorpolataiko.springbootsecurityweb.dto.item.ItemRequest;
 import com.ihorpolataiko.springbootsecurityweb.dto.item.ItemResponse;
 import com.ihorpolataiko.springbootsecurityweb.entity.ItemEntity;
+import com.ihorpolataiko.springbootsecurityweb.exception.NoAccessException;
+import com.ihorpolataiko.springbootsecurityweb.exception.NotFoundException;
 import com.ihorpolataiko.springbootsecurityweb.mapper.ItemMapper;
 import com.ihorpolataiko.springbootsecurityweb.repository.ItemRepository;
 import com.ihorpolataiko.springbootsecurityweb.security.AuthUser;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -95,16 +98,15 @@ public class ItemService {
 
   private ItemEntity getItemEntity(String itemId) {
 
-    // ToDo use custom exception
-    return itemRepository.findById(itemId).orElseThrow();
+    return itemRepository.findById(itemId).orElseThrow(NotFoundException::new);
   }
 
   // for this method security responsibilities is scattered between controller and service
   private void checkAccessToItem(AuthUser authUser, ItemEntity itemEntity) {
 
-    // ToDo use StringUtils.equals()
-    if (authUser.role() != Role.ADMIN && !itemEntity.getUserId().equals(authUser.userId())) {
-      throw new RuntimeException("No access");
+    if (authUser.role() != Role.ADMIN
+        && !StringUtils.equals(itemEntity.getUserId(), authUser.userId())) {
+      throw new NoAccessException();
     }
   }
 }

@@ -6,7 +6,6 @@ import java.time.ZonedDateTime;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-// ToDo created and updated dates
 @Data
 @Entity
 public class ItemEntity {
