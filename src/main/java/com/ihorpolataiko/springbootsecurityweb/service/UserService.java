@@ -1,16 +1,13 @@
 package com.ihorpolataiko.springbootsecurityweb.service;
 
 import com.ihorpolataiko.springbootsecurityweb.common.Role;
-import com.ihorpolataiko.springbootsecurityweb.dto.user.UserCreateRequest;
-import com.ihorpolataiko.springbootsecurityweb.dto.user.UserPasswordUpdateRequest;
-import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponse;
-import com.ihorpolataiko.springbootsecurityweb.dto.user.UserUpdateRequest;
+import com.ihorpolataiko.springbootsecurityweb.dto.user.*;
 import com.ihorpolataiko.springbootsecurityweb.entity.UserEntity;
 import com.ihorpolataiko.springbootsecurityweb.exception.NoAccessException;
 import com.ihorpolataiko.springbootsecurityweb.exception.NotFoundException;
 import com.ihorpolataiko.springbootsecurityweb.mapper.UserMapper;
 import com.ihorpolataiko.springbootsecurityweb.repository.UserRepository;
-import com.ihorpolataiko.springbootsecurityweb.security.AuthUser;
+import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -41,7 +38,7 @@ public class UserService {
     userEntity.setPasswordHash(passwordEncoder.encode(userCreateRequest.password()));
     userEntity.setFirstName(userCreateRequest.firstName());
     userEntity.setLastName(userCreateRequest.lastName());
-    userEntity.setRoles(List.of(Role.USER));
+    userEntity.setRoles(List.of(Role.ROLE_USER));
     userEntity.setActive(true);
 
     UserEntity savedEntity = userRepository.save(userEntity);
@@ -78,10 +75,18 @@ public class UserService {
     return userMapper.toResponse(updatedEntity);
   }
 
-  public UserResponse getUser(String userId) {
+  public UserResponse getUserById(String userId) {
 
     UserEntity userEntity = getUserEntity(userId);
     return userMapper.toResponse(userEntity);
+  }
+
+  public UserResponseWithCredentials getUserCredentialsByUsername(String username) {
+
+    UserEntity userEntity =
+        userRepository.findByUsername(username).orElseThrow(NotFoundException::new);
+    return new UserResponseWithCredentials(
+        userMapper.toResponse(userEntity), userEntity.getPasswordHash());
   }
 
   public Page<UserResponse> listUsers(Pageable pageable) {
@@ -110,7 +115,7 @@ public class UserService {
   public UserResponse promoteUserToAdmin(String userId) {
 
     UserEntity userEntity = getUserEntity(userId);
-    userEntity.setRoles(List.of(Role.USER, Role.ADMIN));
+    userEntity.setRoles(List.of(Role.ROLE_USER, Role.ROLE_ADMIN));
 
     UserEntity updatedEntity = userRepository.save(userEntity);
     return userMapper.toResponse(updatedEntity);
@@ -124,7 +129,7 @@ public class UserService {
   // for this method security responsibilities is scattered between controller and service
   private void checkAccessToUser(AuthUser authUser, UserEntity userEntity) {
 
-    if (authUser.role() != Role.ADMIN
+    if (!authUser.roles().contains(Role.ROLE_ADMIN)
         && !StringUtils.equals(userEntity.getId(), authUser.userId())) {
 
       throw new NoAccessException();

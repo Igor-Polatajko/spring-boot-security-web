@@ -4,16 +4,14 @@ import com.ihorpolataiko.springbootsecurityweb.common.ItemState;
 import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 @Data
 @Entity
+@Table(name = "item")
 public class ItemEntity {
 
-  @Id
-  @GeneratedValue(generator = "system-uuid")
-  @GenericGenerator(name = "system-uuid", strategy = "uuid")
-  private String id;
+  @Id @UuidGenerator private String id;
 
   private String data;
 

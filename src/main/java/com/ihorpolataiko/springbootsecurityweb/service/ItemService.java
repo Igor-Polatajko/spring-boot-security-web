@@ -9,7 +9,7 @@ import com.ihorpolataiko.springbootsecurityweb.exception.NoAccessException;
 import com.ihorpolataiko.springbootsecurityweb.exception.NotFoundException;
 import com.ihorpolataiko.springbootsecurityweb.mapper.ItemMapper;
 import com.ihorpolataiko.springbootsecurityweb.repository.ItemRepository;
-import com.ihorpolataiko.springbootsecurityweb.security.AuthUser;
+import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -104,7 +104,7 @@ public class ItemService {
   // for this method security responsibilities is scattered between controller and service
   private void checkAccessToItem(AuthUser authUser, ItemEntity itemEntity) {
 
-    if (authUser.role() != Role.ADMIN
+    if (!authUser.roles().contains(Role.ROLE_ADMIN)
         && !StringUtils.equals(itemEntity.getUserId(), authUser.userId())) {
       throw new NoAccessException();
     }

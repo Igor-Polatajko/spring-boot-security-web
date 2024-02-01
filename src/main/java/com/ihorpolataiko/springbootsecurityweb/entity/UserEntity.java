@@ -5,18 +5,16 @@ import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 @Data
 @Entity
+@Table(name = "user")
 public class UserEntity {
 
-  // ToDo find  strategy = "uuid" is deprecated
-  @Id
-  @GeneratedValue(generator = "system-uuid")
-  @GenericGenerator(name = "system-uuid", strategy = "uuid")
-  private String id;
+  @Id @UuidGenerator private String id;
 
+  @Column(unique = true)
   private String username;
 
   private String passwordHash;

@@ -1,16 +1,20 @@
 package com.ihorpolataiko.springbootsecurityweb.controller.api;
 
-import com.ihorpolataiko.springbootsecurityweb.common.Role;
+import com.ihorpolataiko.springbootsecurityweb.common.OpenApiConstants;
 import com.ihorpolataiko.springbootsecurityweb.dto.item.ItemRequest;
 import com.ihorpolataiko.springbootsecurityweb.dto.item.ItemResponse;
-import com.ihorpolataiko.springbootsecurityweb.security.AuthUser;
+import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import com.ihorpolataiko.springbootsecurityweb.service.ItemService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/items")
+@SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
 public class ItemApiController {
 
   private final ItemService itemService;
@@ -19,52 +23,59 @@ public class ItemApiController {
     this.itemService = itemService;
   }
 
-  // Authenticated
+  @PreAuthorize("isAuthenticated()")
   @PostMapping
-  public ItemResponse createItem(ItemRequest itemRequest) {
-    return itemService.createItem(itemRequest, new AuthUser("id", Role.USER));
+  public ItemResponse createItem(
+      @RequestBody ItemRequest itemRequest, @AuthenticationPrincipal AuthUser authUser) {
+    return itemService.createItem(itemRequest, authUser);
   }
 
-  // Authenticated
+  @PreAuthorize("isAuthenticated()")
   @GetMapping("/{id}")
-  public ItemResponse getItem(@PathVariable("id") String itemId) {
-    return itemService.getItem(itemId, new AuthUser("id", Role.USER));
+  public ItemResponse getItem(
+      @PathVariable("id") String itemId, @AuthenticationPrincipal AuthUser authUser) {
+    return itemService.getItem(itemId, authUser);
   }
 
-  // Admin
+  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping
   public Page<ItemResponse> listAllItems(Pageable pageable) {
     return itemService.listAllItems(pageable);
   }
 
-  // Authenticated
-  // ToDo check on security level or controller level, that id of the user matches the id in the url
-  //  or the role is admin
+  // check isAuthenticated(), because authentication.principal is String for anonymous
+  // authentication
+  @PreAuthorize(
+      "isAuthenticated() && (hasAuthority('ROLE_ADMIN') || (#userId == authentication.principal.userId))")
   @GetMapping(params = "userId")
   public Page<ItemResponse> listUserItems(
       @RequestParam("userId") String userId, Pageable pageable) {
     return itemService.listUserItems(userId, pageable);
   }
 
-  // Authenticated
+  @PreAuthorize("isAuthenticated()")
   @PutMapping("/{id}")
-  public ItemResponse updateItem(@PathVariable("id") String itemId, ItemRequest itemRequest) {
-    return itemService.updateItem(itemId, itemRequest, new AuthUser("id", Role.USER));
+  public ItemResponse updateItem(
+      @PathVariable("id") String itemId,
+      @RequestBody ItemRequest itemRequest,
+      @AuthenticationPrincipal AuthUser authUser) {
+    return itemService.updateItem(itemId, itemRequest, authUser);
   }
 
-  // Authenticated
+  @PreAuthorize("isAuthenticated()")
   @DeleteMapping("/{id}")
-  public void deleteItem(@PathVariable("id") String itemId) {
-    itemService.deleteItem(itemId, new AuthUser("id", Role.USER));
+  public void deleteItem(
+      @PathVariable("id") String itemId, @AuthenticationPrincipal AuthUser authUser) {
+    itemService.deleteItem(itemId, authUser);
   }
 
-  // Admin
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping("/{id}/approve")
   public ItemResponse approveItem(@PathVariable("id") String itemId) {
     return itemService.approveItem(itemId);
   }
 
-  // Admin
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping("/{id}/reject")
   public ItemResponse rejectItem(@PathVariable("id") String itemId) {
     return itemService.rejectItem(itemId);
