@@ -43,8 +43,7 @@ public class ItemApiController {
     return itemService.listAllItems(pageable);
   }
 
-  // check isAuthenticated(), because authentication.principal is String for anonymous
-  // authentication
+  // check isAuthenticated(), because authentication.principal is String for anonymous authentication
   @PreAuthorize(
       "isAuthenticated() && (hasAuthority('ROLE_ADMIN') || (#userId == authentication.principal.userId))")
   @GetMapping(params = "userId")

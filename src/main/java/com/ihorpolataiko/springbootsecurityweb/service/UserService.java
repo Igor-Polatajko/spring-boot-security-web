@@ -3,20 +3,27 @@ package com.ihorpolataiko.springbootsecurityweb.service;
 import com.ihorpolataiko.springbootsecurityweb.common.Role;
 import com.ihorpolataiko.springbootsecurityweb.dto.user.*;
 import com.ihorpolataiko.springbootsecurityweb.entity.UserEntity;
-import com.ihorpolataiko.springbootsecurityweb.exception.NoAccessException;
 import com.ihorpolataiko.springbootsecurityweb.exception.NotFoundException;
 import com.ihorpolataiko.springbootsecurityweb.mapper.UserMapper;
 import com.ihorpolataiko.springbootsecurityweb.repository.UserRepository;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class UserService {
+
+
+  private final String defaultAdminUsername;
+
+  private final String defaultAdminPassword;
 
   private final UserRepository userRepository;
 
@@ -25,8 +32,14 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
 
   public UserService(
-      UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
-    this.userRepository = userRepository;
+          @Value("${admin.default.username}") String defaultAdminUsername,
+          @Value("${admin.default.password}") String defaultAdminPassword,
+          UserRepository userRepository,
+          UserMapper userMapper,
+          PasswordEncoder passwordEncoder) {
+      this.defaultAdminUsername = defaultAdminUsername;
+      this.defaultAdminPassword = defaultAdminPassword;
+      this.userRepository = userRepository;
     this.userMapper = userMapper;
     this.passwordEncoder = passwordEncoder;
   }
@@ -61,10 +74,9 @@ public class UserService {
     userRepository.save(userEntity);
   }
 
-  public UserResponse updateUser(UserUpdateRequest userUpdateRequest, AuthUser authUser) {
+  public UserResponse updateUser(String userId, UserUpdateRequest userUpdateRequest) {
 
-    UserEntity userEntity = getUserEntity(authUser.userId());
-    checkAccessToUser(authUser, userEntity);
+    UserEntity userEntity = getUserEntity(userId);
 
     userEntity.setUsername(userUpdateRequest.username());
     userEntity.setFirstName(userUpdateRequest.firstName());
@@ -121,18 +133,27 @@ public class UserService {
     return userMapper.toResponse(updatedEntity);
   }
 
+  public void createDefaultAdminIfNotExist() {
+
+    boolean anyAdminExist = userRepository.isAnyAdminExist();
+
+    if(anyAdminExist) {
+      log.info("Admin already exist. Skipping creation of default admin");
+    }
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setUsername(defaultAdminUsername);
+    userEntity.setPasswordHash(passwordEncoder.encode(defaultAdminPassword));
+    userEntity.setFirstName("Admin");
+    userEntity.setLastName("Admin");
+    userEntity.setRoles(List.of(Role.ROLE_ADMIN));
+    userEntity.setActive(true);
+
+    userRepository.save(userEntity);
+  }
+
   private UserEntity getUserEntity(String userId) {
 
     return userRepository.findById(userId).orElseThrow(NotFoundException::new);
-  }
-
-  // for this method security responsibilities is scattered between controller and service
-  private void checkAccessToUser(AuthUser authUser, UserEntity userEntity) {
-
-    if (!authUser.roles().contains(Role.ROLE_ADMIN)
-        && !StringUtils.equals(userEntity.getId(), authUser.userId())) {
-
-      throw new NoAccessException();
-    }
   }
 }

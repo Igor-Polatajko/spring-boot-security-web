@@ -10,3 +10,7 @@ spring:
 springdoc:
   swagger-ui:
     path=/swagger-ui.html
+
+admin.default:
+  username: admin
+  password: admin

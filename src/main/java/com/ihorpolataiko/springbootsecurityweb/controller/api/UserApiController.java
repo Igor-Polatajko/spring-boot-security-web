@@ -32,7 +32,7 @@ public class UserApiController {
   }
 
   @PreAuthorize("isAuthenticated()")
-  @PostMapping("/change-password") // ToDo Ihor, make more compliant with REST API standard?
+  @PostMapping("/change-password")
   @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
   public void changeUserPassword(
       @AuthenticationPrincipal AuthUser authUser,
@@ -40,24 +40,30 @@ public class UserApiController {
     userService.changeUserPassword(passwordUpdateRequest, authUser);
   }
 
-  @PreAuthorize("isAuthenticated()")
-  @PutMapping // ToDo Ihor, make more compliant with REST API standard?
+  @PreAuthorize("isAuthenticated() && #userId == authentication.principal.userId")
+  @PutMapping("/{id}")
   @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
   public UserResponse updateUser(
-      @RequestBody UserUpdateRequest userUpdateRequest,
-      @AuthenticationPrincipal AuthUser authUser) {
-    return userService.updateUser(userUpdateRequest, authUser);
+      @PathVariable("id") String userId, @RequestBody UserUpdateRequest userUpdateRequest) {
+    return userService.updateUser(userId, userUpdateRequest);
   }
 
-  // check isAuthenticated(), because authentication.principal is String for anonymous
-  // authentication
-  // Spring SPEL uses same parameter names from as method parameter
+  // check isAuthenticated(), because authentication.principal is String for anonymous authentication
+  // Spring SPEL uses the same parameter names as method parameter names.
+  // Yes, there is a /me endpoint, but we also allow users to get user data by ID just for demonstration purposes
   @PreAuthorize(
       "isAuthenticated() && (hasAuthority('ROLE_ADMIN') || (#userId == authentication.principal.userId))")
   @GetMapping("/{id}")
   @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
   public UserResponse getUserById(@PathVariable("id") String userId) {
     return userService.getUserById(userId);
+  }
+
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/me")
+  @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
+  public UserResponse getCurrentUser(AuthUser authUser) {
+    return userService.getUserById(authUser.userId());
   }
 
   @PreAuthorize("hasRole('ADMIN')")

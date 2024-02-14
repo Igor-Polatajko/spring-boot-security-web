@@ -56,8 +56,8 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             matcher ->
                 matcher
-                    // method security will be evaluated after DSL configs, so we have to define
-                    // public paths upfront
+                    // method security will be evaluated after DSL configs,
+                    // so we have to define public paths upfront
                     .requestMatchers(HttpMethod.POST, "/auth/login", "/users")
                     .permitAll())
         .authorizeHttpRequests(matcher -> matcher.anyRequest().authenticated())
