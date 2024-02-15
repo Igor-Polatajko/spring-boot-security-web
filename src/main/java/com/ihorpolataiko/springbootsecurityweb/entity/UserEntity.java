@@ -3,7 +3,8 @@ package com.ihorpolataiko.springbootsecurityweb.entity;
 import com.ihorpolataiko.springbootsecurityweb.common.Role;
 import jakarta.persistence.*;
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.Set;
+
 import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -25,7 +26,7 @@ public class UserEntity {
 
   @Enumerated(EnumType.STRING)
   @ElementCollection(fetch = FetchType.EAGER)
-  private List<Role> roles;
+  private Set<Role> roles;
 
   private Boolean active;
 

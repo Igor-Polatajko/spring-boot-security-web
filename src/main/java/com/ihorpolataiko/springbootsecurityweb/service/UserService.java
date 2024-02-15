@@ -6,8 +6,10 @@ import com.ihorpolataiko.springbootsecurityweb.entity.UserEntity;
 import com.ihorpolataiko.springbootsecurityweb.exception.NotFoundException;
 import com.ihorpolataiko.springbootsecurityweb.mapper.UserMapper;
 import com.ihorpolataiko.springbootsecurityweb.repository.UserRepository;
+import com.ihorpolataiko.springbootsecurityweb.security.exception.ApplicationAuthenticationException;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
-import java.util.List;
+
+import java.util.Set;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +53,7 @@ public class UserService {
     userEntity.setPasswordHash(passwordEncoder.encode(userCreateRequest.password()));
     userEntity.setFirstName(userCreateRequest.firstName());
     userEntity.setLastName(userCreateRequest.lastName());
-    userEntity.setRoles(List.of(Role.ROLE_USER));
+    userEntity.setRoles(Set.of(Role.ROLE_USER));
     userEntity.setActive(true);
 
     UserEntity savedEntity = userRepository.save(userEntity);
@@ -64,12 +66,12 @@ public class UserService {
 
     UserEntity userEntity = getUserEntity(authUser.userId());
 
-    if (passwordEncoder.matches(
+    if (!passwordEncoder.matches(
         passwordUpdateRequest.oldPassword(), userEntity.getPasswordHash())) {
-      throw new RuntimeException("Old password is incorrect");
+      throw new ApplicationAuthenticationException("Old password is incorrect");
     }
 
-    userEntity.setPasswordHash(passwordUpdateRequest.newPassword());
+    userEntity.setPasswordHash(passwordEncoder.encode(passwordUpdateRequest.newPassword()));
 
     userRepository.save(userEntity);
   }
@@ -127,7 +129,7 @@ public class UserService {
   public UserResponse promoteUserToAdmin(String userId) {
 
     UserEntity userEntity = getUserEntity(userId);
-    userEntity.setRoles(List.of(Role.ROLE_USER, Role.ROLE_ADMIN));
+    userEntity.getRoles().add(Role.ROLE_ADMIN);
 
     UserEntity updatedEntity = userRepository.save(userEntity);
     return userMapper.toResponse(updatedEntity);
@@ -138,7 +140,8 @@ public class UserService {
     boolean anyAdminExist = userRepository.isAnyAdminExist();
 
     if(anyAdminExist) {
-      log.info("Admin already exist. Skipping creation of default admin");
+      log.info("Admin already exist. Skipping creation of default admin user");
+      return;
     }
 
     UserEntity userEntity = new UserEntity();
@@ -146,10 +149,12 @@ public class UserService {
     userEntity.setPasswordHash(passwordEncoder.encode(defaultAdminPassword));
     userEntity.setFirstName("Admin");
     userEntity.setLastName("Admin");
-    userEntity.setRoles(List.of(Role.ROLE_ADMIN));
+    userEntity.setRoles(Set.of(Role.ROLE_ADMIN));
     userEntity.setActive(true);
 
-    userRepository.save(userEntity);
+    UserEntity savedUser = userRepository.save(userEntity);
+
+    log.info("Default admin user was created with id={}", savedUser.getId());
   }
 
   private UserEntity getUserEntity(String userId) {

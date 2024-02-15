@@ -8,8 +8,10 @@ import com.ihorpolataiko.springbootsecurityweb.dto.user.UserUpdateRequest;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import com.ihorpolataiko.springbootsecurityweb.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -62,32 +64,32 @@ public class UserApiController {
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/me")
   @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
-  public UserResponse getCurrentUser(AuthUser authUser) {
+  public UserResponse getCurrentUser(@AuthenticationPrincipal AuthUser authUser) {
     return userService.getUserById(authUser.userId());
   }
-
-  @PreAuthorize("hasRole('ADMIN')")
+  
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @GetMapping
   @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
-  public Page<UserResponse> listUsers(Pageable pageable) {
+  public Page<UserResponse> listUsers(@PageableDefault @ParameterObject Pageable pageable) {
     return userService.listUsers(pageable);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/{id}/activate")
   @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
   public UserResponse activateUser(@PathVariable("id") String userId) {
     return userService.activateUser(userId);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/{id}/deactivate")
   @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
   public UserResponse deactivateUser(@PathVariable("id") String userId) {
     return userService.deactivateUser(userId);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/{id}/promote")
   @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
   public UserResponse promoteUserToAdmin(@PathVariable("id") String userId) {

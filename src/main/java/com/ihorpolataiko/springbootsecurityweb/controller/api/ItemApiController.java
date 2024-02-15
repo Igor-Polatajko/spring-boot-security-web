@@ -6,8 +6,10 @@ import com.ihorpolataiko.springbootsecurityweb.dto.item.ItemResponse;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import com.ihorpolataiko.springbootsecurityweb.service.ItemService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +39,9 @@ public class ItemApiController {
     return itemService.getItem(itemId, authUser);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @GetMapping
-  public Page<ItemResponse> listAllItems(Pageable pageable) {
+  public Page<ItemResponse> listAllItems(@PageableDefault @ParameterObject Pageable pageable) {
     return itemService.listAllItems(pageable);
   }
 
@@ -48,7 +50,7 @@ public class ItemApiController {
       "isAuthenticated() && (hasAuthority('ROLE_ADMIN') || (#userId == authentication.principal.userId))")
   @GetMapping(params = "userId")
   public Page<ItemResponse> listUserItems(
-      @RequestParam("userId") String userId, Pageable pageable) {
+      @RequestParam("userId") String userId, @PageableDefault @ParameterObject Pageable pageable) {
     return itemService.listUserItems(userId, pageable);
   }
 
@@ -68,13 +70,13 @@ public class ItemApiController {
     itemService.deleteItem(itemId, authUser);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/{id}/approve")
   public ItemResponse approveItem(@PathVariable("id") String itemId) {
     return itemService.approveItem(itemId);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/{id}/reject")
   public ItemResponse rejectItem(@PathVariable("id") String itemId) {
     return itemService.rejectItem(itemId);
