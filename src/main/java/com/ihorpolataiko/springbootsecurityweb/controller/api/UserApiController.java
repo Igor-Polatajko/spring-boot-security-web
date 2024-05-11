@@ -50,9 +50,11 @@ public class UserApiController {
     return userService.updateUser(userId, userUpdateRequest);
   }
 
-  // check isAuthenticated(), because authentication.principal is String for anonymous authentication
+  // check isAuthenticated(), because authentication.principal is String for anonymous
+  // authentication
   // Spring SPEL uses the same parameter names as method parameter names.
-  // Yes, there is a /me endpoint, but we also allow users to get user data by ID just for demonstration purposes
+  // Yes, there is a /me endpoint, but we also allow users to get user data by ID just for
+  // demonstration purposes
   @PreAuthorize(
       "isAuthenticated() && (hasAuthority('ROLE_ADMIN') || (#userId == authentication.principal.userId))")
   @GetMapping("/{id}")
@@ -67,7 +69,7 @@ public class UserApiController {
   public UserResponse getCurrentUser(@AuthenticationPrincipal AuthUser authUser) {
     return userService.getUserById(authUser.userId());
   }
-  
+
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @GetMapping
   @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)

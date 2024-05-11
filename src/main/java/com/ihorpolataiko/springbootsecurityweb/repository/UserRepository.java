@@ -9,7 +9,10 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
   Optional<UserEntity> findByUsername(String username);
 
-  @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM UserEntity u " +
-          "WHERE com.ihorpolataiko.springbootsecurityweb.common.Role.ROLE_ADMIN MEMBER OF u.roles")
+  @Query(
+      """
+      SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM UserEntity u
+          WHERE com.ihorpolataiko.springbootsecurityweb.common.Role.ROLE_ADMIN MEMBER OF u.roles
+      """)
   boolean isAnyAdminExist();
 }

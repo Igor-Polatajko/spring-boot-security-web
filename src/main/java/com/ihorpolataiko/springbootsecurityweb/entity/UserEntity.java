@@ -4,7 +4,6 @@ import com.ihorpolataiko.springbootsecurityweb.common.Role;
 import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.Set;
-
 import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
 

@@ -5,6 +5,7 @@ import com.ihorpolataiko.springbootsecurityweb.dto.item.ItemRequest;
 import com.ihorpolataiko.springbootsecurityweb.dto.item.ItemResponse;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import com.ihorpolataiko.springbootsecurityweb.service.ItemService;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -45,12 +46,14 @@ public class ItemApiController {
     return itemService.listAllItems(pageable);
   }
 
-  // check isAuthenticated(), because authentication.principal is String for anonymous authentication
+  // check isAuthenticated(), because authentication.principal is String for anonymous
+  // authentication
   @PreAuthorize(
       "isAuthenticated() && (hasAuthority('ROLE_ADMIN') || (#userId == authentication.principal.userId))")
   @GetMapping(params = "userId")
   public Page<ItemResponse> listUserItems(
-      @RequestParam("userId") String userId, @PageableDefault @ParameterObject Pageable pageable) {
+      @Parameter(allowEmptyValue = true) @RequestParam("userId") String userId,
+      @PageableDefault @ParameterObject Pageable pageable) {
     return itemService.listUserItems(userId, pageable);
   }
 

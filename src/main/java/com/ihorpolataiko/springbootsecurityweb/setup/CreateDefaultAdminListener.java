@@ -8,16 +8,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class CreateDefaultAdminListener {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    public CreateDefaultAdminListener(UserService userService) {
-        this.userService = userService;
-    }
+  public CreateDefaultAdminListener(UserService userService) {
+    this.userService = userService;
+  }
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void createDefaultAdmin() {
+  @EventListener(ApplicationReadyEvent.class)
+  public void createDefaultAdmin() {
 
-        userService.createDefaultAdminIfNotExist();
-    }
-
+    userService.createDefaultAdminIfNotExist();
+  }
 }
