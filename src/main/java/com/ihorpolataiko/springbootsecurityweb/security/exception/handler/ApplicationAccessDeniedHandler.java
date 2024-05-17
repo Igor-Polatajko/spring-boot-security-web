@@ -2,7 +2,6 @@ package com.ihorpolataiko.springbootsecurityweb.security.exception.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ihorpolataiko.springbootsecurityweb.dto.error.ApiErrorResponse;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -26,7 +25,7 @@ public class ApplicationAccessDeniedHandler implements AccessDeniedHandler {
       HttpServletRequest request,
       HttpServletResponse response,
       AccessDeniedException accessDeniedException)
-      throws IOException, ServletException {
+      throws IOException {
 
     log.error("Access denied for request: {}", request, accessDeniedException);
 

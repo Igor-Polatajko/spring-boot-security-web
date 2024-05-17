@@ -2,7 +2,7 @@ package com.ihorpolataiko.springbootsecurityweb.security.filter;
 
 import com.ihorpolataiko.springbootsecurityweb.common.AuthConstants;
 import com.ihorpolataiko.springbootsecurityweb.security.authentication.UserAuthentication;
-import com.ihorpolataiko.springbootsecurityweb.security.exception.TokenAuthorizationException;
+import com.ihorpolataiko.springbootsecurityweb.security.exception.TokenAuthenticationException;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserCache;
 import jakarta.servlet.FilterChain;
@@ -39,7 +39,7 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
     AuthUser authUser =
         authUserCache
             .getByToken(authenticationHeader)
-            .orElseThrow(() -> new TokenAuthorizationException("Token is not valid"));
+            .orElseThrow(() -> new TokenAuthenticationException("Token is not valid"));
 
     SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(authUser));
 
