@@ -14,3 +14,6 @@ springdoc:
 admin.default:
   username: admin
   password: admin
+
+jwt:
+  signing-secret: some-secret

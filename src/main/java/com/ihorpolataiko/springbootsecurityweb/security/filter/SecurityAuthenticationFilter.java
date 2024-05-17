@@ -3,8 +3,8 @@ package com.ihorpolataiko.springbootsecurityweb.security.filter;
 import com.ihorpolataiko.springbootsecurityweb.common.AuthConstants;
 import com.ihorpolataiko.springbootsecurityweb.security.authentication.UserAuthentication;
 import com.ihorpolataiko.springbootsecurityweb.security.exception.TokenAuthenticationException;
+import com.ihorpolataiko.springbootsecurityweb.security.service.jwt.JwtService;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
-import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserCache;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,10 +17,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class SecurityAuthenticationFilter extends OncePerRequestFilter {
 
-  private final AuthUserCache authUserCache;
+  private final JwtService jwtService;
 
-  public SecurityAuthenticationFilter(AuthUserCache authUserCache) {
-    this.authUserCache = authUserCache;
+  public SecurityAuthenticationFilter(JwtService jwtService) {
+    this.jwtService = jwtService;
   }
 
   @Override
@@ -36,13 +36,20 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
       return;
     }
 
-    AuthUser authUser =
-        authUserCache
-            .getByToken(authenticationHeader)
-            .orElseThrow(() -> new TokenAuthenticationException("Token is not valid"));
+    String jwtToken = stripBearerPrefix(authenticationHeader);
+    AuthUser authUser = jwtService.resolveJwtToken(jwtToken);
 
     SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(authUser));
 
     filterChain.doFilter(request, response);
+  }
+
+  String stripBearerPrefix(String token) {
+
+    if (!token.startsWith("Bearer")) {
+      throw new TokenAuthenticationException("Unsupported authentication scheme");
+    }
+
+    return token.substring(7);
   }
 }

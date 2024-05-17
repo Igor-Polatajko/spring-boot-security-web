@@ -5,26 +5,25 @@ import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponseWithCredenti
 import com.ihorpolataiko.springbootsecurityweb.security.dto.LoginDto;
 import com.ihorpolataiko.springbootsecurityweb.security.dto.TokenDto;
 import com.ihorpolataiko.springbootsecurityweb.security.exception.ApplicationAuthenticationException;
+import com.ihorpolataiko.springbootsecurityweb.security.service.jwt.JwtService;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
-import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserCache;
-import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
-  private final AuthUserCache authUserCache;
-
   private final UserService userService;
 
   private final PasswordEncoder passwordEncoder;
 
+  private final JwtService jwtService;
+
   public AuthService(
-      AuthUserCache authUserCache, UserService userService, PasswordEncoder passwordEncoder) {
-    this.authUserCache = authUserCache;
+      UserService userService, PasswordEncoder passwordEncoder, JwtService jwtService) {
     this.userService = userService;
     this.passwordEncoder = passwordEncoder;
+    this.jwtService = jwtService;
   }
 
   public TokenDto login(LoginDto loginDto) {
@@ -36,17 +35,11 @@ public class AuthService {
       throw new ApplicationAuthenticationException("Password is incorrect");
     }
 
-    String token = UUID.randomUUID().toString();
     UserResponse userResponse = userCredentials.userResponse();
     AuthUser authUser = new AuthUser(userResponse.id(), userResponse.roles());
 
-    authUserCache.login(token, authUser);
+    String jwtToken = jwtService.createJwtToken(authUser);
 
-    return new TokenDto(token);
-  }
-
-  public void logout(String token) {
-
-    authUserCache.logout(token);
+    return new TokenDto(jwtToken);
   }
 }
