@@ -35,7 +35,7 @@ public class UserApiController {
 
   @PreAuthorize("isAuthenticated()")
   @PostMapping("/change-password")
-  @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
+  @SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
   public void changeUserPassword(
       @AuthenticationPrincipal AuthUser authUser,
       @RequestBody UserPasswordUpdateRequest passwordUpdateRequest) {
@@ -44,7 +44,7 @@ public class UserApiController {
 
   @PreAuthorize("isAuthenticated() && #userId == authentication.principal.userId")
   @PutMapping("/{id}")
-  @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
+  @SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
   public UserResponse updateUser(
       @PathVariable("id") String userId, @RequestBody UserUpdateRequest userUpdateRequest) {
     return userService.updateUser(userId, userUpdateRequest);
@@ -58,42 +58,42 @@ public class UserApiController {
   @PreAuthorize(
       "isAuthenticated() && (hasAuthority('ROLE_ADMIN') || (#userId == authentication.principal.userId))")
   @GetMapping("/{id}")
-  @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
+  @SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
   public UserResponse getUserById(@PathVariable("id") String userId) {
     return userService.getUserById(userId);
   }
 
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/me")
-  @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
+  @SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
   public UserResponse getCurrentUser(@AuthenticationPrincipal AuthUser authUser) {
     return userService.getUserById(authUser.userId());
   }
 
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @GetMapping
-  @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
+  @SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
   public Page<UserResponse> listUsers(@PageableDefault @ParameterObject Pageable pageable) {
     return userService.listUsers(pageable);
   }
 
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/{id}/activate")
-  @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
+  @SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
   public UserResponse activateUser(@PathVariable("id") String userId) {
     return userService.activateUser(userId);
   }
 
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/{id}/deactivate")
-  @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
+  @SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
   public UserResponse deactivateUser(@PathVariable("id") String userId) {
     return userService.deactivateUser(userId);
   }
 
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/{id}/promote")
-  @SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
+  @SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
   public UserResponse promoteUserToAdmin(@PathVariable("id") String userId) {
     return userService.promoteUserToAdmin(userId);
   }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/items")
-@SecurityRequirement(name = OpenApiConstants.TOKEN_SECURITY_REQUIREMENT)
+@SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
 public class ItemApiController {
 
   private final ItemService itemService;

@@ -2,5 +2,5 @@ package com.ihorpolataiko.springbootsecurityweb.common;
 
 public interface OpenApiConstants {
 
-  String TOKEN_SECURITY_REQUIREMENT = "Token";
+  String BASIC_SECURITY_REQUIREMENT = "Basic";
 }
