@@ -1,42 +1,49 @@
 package com.ihorpolataiko.springbootsecurityweb.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 
 @EnableMethodSecurity // allow to specify access via annotations
 @Configuration
 public class SecurityConfig {
 
-  private final UserDetailsService userDetailsService;
+  private final String adminUsername;
 
-  private final AuthenticationEntryPoint authenticationEntryPoint;
-
-  private final AccessDeniedHandler accessDeniedHandler;
+  private final String adminPassword;
 
   public SecurityConfig(
-      UserDetailsService userDetailsService,
-      AuthenticationEntryPoint authenticationEntryPoint,
-      AccessDeniedHandler accessDeniedHandler) {
-    this.userDetailsService = userDetailsService;
+      // let's just reuse the values, that we defined for our admin through the properties
+      @Value("${admin.default.username}") String adminUsername,
+      @Value("${admin.default.password}") String adminPassword) {
 
-    this.authenticationEntryPoint = authenticationEntryPoint;
-    this.accessDeniedHandler = accessDeniedHandler;
+    this.adminUsername = adminUsername;
+    this.adminPassword = adminPassword;
+  }
+
+  // we autowire AuthenticationManagerBuilder and register out-of-the-box implementation of
+  // UserDetailsService there
+  @Autowired
+  public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    auth.inMemoryAuthentication()
+        .withUser(adminUsername)
+        // we add prefix {noop}, because the password is not hashed (raw)
+        // also, we do not register password encoder, so default is used
+        .password("{noop}" + adminPassword)
+        .roles("ADMIN"); // role without "ROLE_" prefix
   }
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http.httpBasic(Customizer.withDefaults())
-        .userDetailsService(userDetailsService)
         .authorizeHttpRequests(
             mather ->
                 mather
@@ -46,20 +53,8 @@ public class SecurityConfig {
                         "/v3/api-docs",
                         "/v3/api-docs/swagger-config")
                     .permitAll())
-        .authorizeHttpRequests(
-            matcher ->
-                matcher
-                    // method security will be evaluated after DSL configs,
-                    // so we have to define public paths upfront
-                    .requestMatchers(HttpMethod.POST, "/users")
-                    .permitAll())
         .authorizeHttpRequests(matcher -> matcher.anyRequest().authenticated())
-        .csrf(AbstractHttpConfigurer::disable)
-        .exceptionHandling(
-            customizer ->
-                customizer
-                    .accessDeniedHandler(accessDeniedHandler)
-                    .authenticationEntryPoint(authenticationEntryPoint));
+        .csrf(AbstractHttpConfigurer::disable);
 
     return http.build();
   }
