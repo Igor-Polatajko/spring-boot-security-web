@@ -16,7 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/items")
+@RequestMapping("/api/items")
 @SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
 public class ItemApiController {
 
