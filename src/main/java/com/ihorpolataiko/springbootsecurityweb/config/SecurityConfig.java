@@ -58,7 +58,7 @@ public class SecurityConfig {
                 matcher
                     // method security will be evaluated after DSL configs,
                     // so we have to define public paths upfront
-                    .requestMatchers(HttpMethod.POST, "/auth/login", "/users")
+                    .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/users")
                     .permitAll())
         .authorizeHttpRequests(matcher -> matcher.anyRequest().authenticated())
         .csrf(AbstractHttpConfigurer::disable)
