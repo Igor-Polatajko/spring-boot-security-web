@@ -6,6 +6,9 @@ spring:
     url: jdbc:mysql://localhost:3306/spring_boot_security_web
     username: root
     password: root
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
 
 springdoc:
   swagger-ui:

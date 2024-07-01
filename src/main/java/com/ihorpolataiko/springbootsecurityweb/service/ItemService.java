@@ -60,7 +60,7 @@ public class ItemService {
   public ItemResponse updateItem(String itemId, ItemRequest itemRequest, AuthUser authUser) {
 
     ItemEntity itemEntity = getItemEntity(itemId);
-    checkAccessToItem(authUser, itemEntity);
+    checkIsOwner(authUser, itemEntity);
 
     itemEntity.setData(itemRequest.data());
     itemEntity.setItemState(ItemState.CHANGED);
@@ -104,9 +104,18 @@ public class ItemService {
   // for this method security responsibilities is scattered between controller and service
   private void checkAccessToItem(AuthUser authUser, ItemEntity itemEntity) {
 
-    if (!authUser.roles().contains(Role.ROLE_ADMIN)
-        && !StringUtils.equals(itemEntity.getUserId(), authUser.userId())) {
+    if (!authUser.roles().contains(Role.ROLE_ADMIN) && !isOwner(authUser, itemEntity)) {
       throw new NoAccessException();
     }
+  }
+
+  private void checkIsOwner(AuthUser authUser, ItemEntity itemEntity) {
+    if (!isOwner(authUser, itemEntity)) {
+      throw new NoAccessException();
+    }
+  }
+
+  private boolean isOwner(AuthUser authUser, ItemEntity itemEntity) {
+    return StringUtils.equals(itemEntity.getUserId(), authUser.userId());
   }
 }
