@@ -1,6 +1,6 @@
 package com.ihorpolataiko.springbootsecurityweb.config;
 
-import com.ihorpolataiko.springbootsecurityweb.security.UsernamePasswordAuthenticationProvider;
+import com.ihorpolataiko.springbootsecurityweb.security.CustomAuthenticationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -12,25 +12,18 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-  private final UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider;
+  private final CustomAuthenticationManager customAuthenticationManager;
 
-  public SecurityConfig(
-      UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider) {
-    this.usernamePasswordAuthenticationProvider = usernamePasswordAuthenticationProvider;
+  public SecurityConfig(CustomAuthenticationManager customAuthenticationManager) {
+    this.customAuthenticationManager = customAuthenticationManager;
   }
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http.formLogin(Customizer.withDefaults())
-        // provide authentication provider implementation
-        //   you can specify many authentication providers,
-        //   ProviderManager will invoke them based on the type of
-        //   the Authentication which was created earlier in the chain of security filters
-        //  .authenticationProvider(...)
-        //  .authenticationProvider(...)
-        //  .authenticationProvider(...)
-        .authenticationProvider(usernamePasswordAuthenticationProvider)
+        // provide authentication manager implementation
+        .authenticationManager(customAuthenticationManager)
         // allow public access to the home page
         .authorizeHttpRequests(mather -> mather.requestMatchers("/").permitAll())
         // deny requests to API for this example

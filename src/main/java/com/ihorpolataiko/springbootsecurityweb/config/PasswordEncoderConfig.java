@@ -10,7 +10,7 @@ public class PasswordEncoderConfig {
 
   // password encoder is required by the UserService, which would create circular dependency if we
   // put this bean declaration to the SecurityConfig class (because, UserService is used by
-  // UsernamePasswordAuthenticationProvider, which in turn is required by SecurityConfig). There are
+  // CustomAuthenticationManager, which in turn is required by SecurityConfig). There are
   // many possible ways to solve it, but let's just put this bean declaration into another class
   @Bean
   public PasswordEncoder encoder() {
