@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 // Now our user has to implement UserDetails, because that is required by UserDetailsService, which
 // is used by BasicAuthenticationFilter under the hoods of Spring Security
+// (BasicAuthenticationFilter -> ProviderManager -> DaoAuthenticationProvider -> UserDetailsService)
 public record AuthUser(String userId, List<Role> roles, String passwordHash)
     implements UserDetails {
 
