@@ -1,26 +1,30 @@
 package com.ihorpolataiko.springbootsecurityweb.security.filter;
 
-import com.ihorpolataiko.springbootsecurityweb.common.AuthConstants;
-import com.ihorpolataiko.springbootsecurityweb.security.authentication.UserAuthentication;
-import com.ihorpolataiko.springbootsecurityweb.security.exception.TokenAuthenticationException;
-import com.ihorpolataiko.springbootsecurityweb.security.service.jwt.JwtService;
-import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+// Usually, Spring Security implementations do not allocate a separate filter
+// to performing authentication itself (aka calling AuthenticationManager.authenticate(...))
+// and make calls to AuthenticationManager in the same filter where unauthenticated
+// authentication is created, but in this example let's dedicate a separate filter solely for
+// authentication of unauthenticated Authentication.
+// This filter should be registered in the chain after the filters
+// that create unauthenticated authentication.
 @Component
 public class SecurityAuthenticationFilter extends OncePerRequestFilter {
 
-  private final JwtService jwtService;
+  private final AuthenticationManager authenticationManager;
 
-  public SecurityAuthenticationFilter(JwtService jwtService) {
-    this.jwtService = jwtService;
+  public SecurityAuthenticationFilter(AuthenticationManager authenticationManager) {
+    this.authenticationManager = authenticationManager;
   }
 
   @Override
@@ -28,28 +32,22 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    String authenticationHeader = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
+    Authentication unauthenticatedAuthentication =
+        SecurityContextHolder.getContext().getAuthentication();
 
-    if (authenticationHeader == null) {
-      // Authentication token is not present, let's rely on anonymous authentication
+    if (unauthenticatedAuthentication == null || unauthenticatedAuthentication.isAuthenticated()) {
+
       filterChain.doFilter(request, response);
       return;
     }
 
-    String jwtToken = stripBearerPrefix(authenticationHeader);
-    AuthUser authUser = jwtService.resolveJwtToken(jwtToken);
+    Authentication authentication =
+        authenticationManager.authenticate(unauthenticatedAuthentication);
 
-    SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(authUser));
-
-    filterChain.doFilter(request, response);
-  }
-
-  String stripBearerPrefix(String token) {
-
-    if (!token.startsWith("Bearer")) {
-      throw new TokenAuthenticationException("Unsupported authentication scheme");
+    if (authentication != null) {
+      SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    return token.substring(7);
+    filterChain.doFilter(request, response);
   }
 }

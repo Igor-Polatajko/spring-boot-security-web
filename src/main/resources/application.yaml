@@ -17,3 +17,8 @@ admin.default:
 
 jwt:
   signing-secret: some-secret
+
+api-key:
+  clients:
+    client-a: abc
+    client-b: 111

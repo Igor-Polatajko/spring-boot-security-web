@@ -7,7 +7,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-public record UserAuthentication(AuthUser authUser) implements Authentication {
+public record JwtAuthentication(AuthUser authUser, boolean authenticated, String jwtToken)
+    implements Authentication {
+
+  public static JwtAuthentication unauthenticated(String jwtToken) {
+
+    return new JwtAuthentication(null, false, jwtToken);
+  }
+
+  public static JwtAuthentication authenticated(AuthUser authUser) {
+
+    return new JwtAuthentication(authUser, true, null);
+  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -19,7 +30,7 @@ public record UserAuthentication(AuthUser authUser) implements Authentication {
 
   @Override
   public Object getCredentials() {
-    return null;
+    return jwtToken;
   }
 
   @Override
@@ -34,14 +45,12 @@ public record UserAuthentication(AuthUser authUser) implements Authentication {
 
   @Override
   public boolean isAuthenticated() {
-    // This value is set to true in this example because Authentication is used only to represent
-    // an authenticated user and not for transferring authentication details
-    return true;
+    return authenticated;
   }
 
   @Override
   public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-    // NoOp
+    throw new UnsupportedOperationException();
   }
 
   @Override

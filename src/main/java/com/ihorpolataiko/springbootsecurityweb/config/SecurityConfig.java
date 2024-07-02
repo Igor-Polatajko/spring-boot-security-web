@@ -1,10 +1,11 @@
 package com.ihorpolataiko.springbootsecurityweb.config;
 
+import com.ihorpolataiko.springbootsecurityweb.security.filter.ApiKeyFilter;
+import com.ihorpolataiko.springbootsecurityweb.security.filter.JwtTokenFilter;
 import com.ihorpolataiko.springbootsecurityweb.security.filter.SecurityAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,6 +20,10 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 @Configuration
 public class SecurityConfig {
 
+  private final JwtTokenFilter jwtTokenFilter;
+
+  private final ApiKeyFilter apiKeyFilter;
+
   private final SecurityAuthenticationFilter securityAuthenticationFilter;
 
   private final AuthenticationEntryPoint authenticationEntryPoint;
@@ -26,9 +31,13 @@ public class SecurityConfig {
   private final AccessDeniedHandler accessDeniedHandler;
 
   public SecurityConfig(
+      JwtTokenFilter jwtTokenFilter,
+      ApiKeyFilter apiKeyFilter,
       SecurityAuthenticationFilter securityAuthenticationFilter,
       AuthenticationEntryPoint authenticationEntryPoint,
       AccessDeniedHandler accessDeniedHandler) {
+    this.jwtTokenFilter = jwtTokenFilter;
+    this.apiKeyFilter = apiKeyFilter;
 
     this.securityAuthenticationFilter = securityAuthenticationFilter;
     this.authenticationEntryPoint = authenticationEntryPoint;
@@ -44,6 +53,8 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http.addFilterBefore(securityAuthenticationFilter, AuthorizationFilter.class)
+        .addFilterBefore(jwtTokenFilter, SecurityAuthenticationFilter.class)
+        .addFilterBefore(apiKeyFilter, JwtTokenFilter.class)
         .authorizeHttpRequests(
             mather ->
                 mather
@@ -70,11 +81,5 @@ public class SecurityConfig {
                     .authenticationEntryPoint(authenticationEntryPoint));
 
     return http.build();
-  }
-
-  // register NoOp AuthenticationManager to avoid log printed by default autoconfiguration
-  @Bean
-  public AuthenticationManager noOpAuthenticationManager() {
-    return authentication -> null;
   }
 }
