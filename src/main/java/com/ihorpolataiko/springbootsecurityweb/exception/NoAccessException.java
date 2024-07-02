@@ -1,6 +1,8 @@
 package com.ihorpolataiko.springbootsecurityweb.exception;
 
-public class NoAccessException extends RuntimeException {
+import org.springframework.security.access.AccessDeniedException;
+
+public class NoAccessException extends AccessDeniedException {
 
   public NoAccessException() {
     super("No access");
