@@ -1,29 +1,36 @@
 package com.ihorpolataiko.springbootsecurityweb.config;
 
+import com.ihorpolataiko.springbootsecurityweb.security.UsernamePasswordAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableMethodSecurity // allow to specify access via annotations
 @Configuration
 public class SecurityConfig {
 
-  private final UserDetailsService userDetailsService;
+  private final UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider;
 
-  public SecurityConfig(UserDetailsService userDetailsService) {
-    this.userDetailsService = userDetailsService;
+  public SecurityConfig(
+      UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider) {
+    this.usernamePasswordAuthenticationProvider = usernamePasswordAuthenticationProvider;
   }
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http.formLogin(Customizer.withDefaults())
-        // provide user details service implementation
-        .userDetailsService(userDetailsService)
+        // provide authentication provider implementation
+        //   you can specify many authentication providers,
+        //   ProviderManager will invoke them based on the type of
+        //   the Authentication which was created earlier in the chain of security filters
+        //  .authenticationProvider(...)
+        //  .authenticationProvider(...)
+        //  .authenticationProvider(...)
+        .authenticationProvider(usernamePasswordAuthenticationProvider)
         // allow public access to the home page
         .authorizeHttpRequests(mather -> mather.requestMatchers("/").permitAll())
         // deny requests to API for this example
