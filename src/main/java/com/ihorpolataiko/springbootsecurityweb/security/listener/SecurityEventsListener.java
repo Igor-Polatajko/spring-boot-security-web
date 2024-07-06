@@ -17,6 +17,9 @@ public class SecurityEventsListener {
         "Authentication SUCCESS event received. Authentication: {}", event.getAuthentication());
   }
 
+  // Be careful with the authentication failure listener, because the authentication event will
+  // contain Authentication with credentials (as the authenticated authentication was not created),
+  // so avoid logging it in the production
   @EventListener(AbstractAuthenticationFailureEvent.class)
   public void handleAuthenticationFailure(AbstractAuthenticationFailureEvent event) {
     log.warn(
