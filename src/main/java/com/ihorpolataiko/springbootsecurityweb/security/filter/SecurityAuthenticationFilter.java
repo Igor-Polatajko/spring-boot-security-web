@@ -21,11 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class SecurityAuthenticationFilter extends OncePerRequestFilter {
 
-  private final AuthenticationManager authenticationManager;
-
-  public SecurityAuthenticationFilter(AuthenticationManager authenticationManager) {
-    this.authenticationManager = authenticationManager;
-  }
+  private AuthenticationManager authenticationManager;
 
   @Override
   protected void doFilterInternal(
@@ -49,5 +45,9 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
     }
 
     filterChain.doFilter(request, response);
+  }
+
+  public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+    this.authenticationManager = authenticationManager;
   }
 }

@@ -1,11 +1,10 @@
 package com.ihorpolataiko.springbootsecurityweb.config;
 
-import com.ihorpolataiko.springbootsecurityweb.security.filter.ApiKeyFilter;
-import com.ihorpolataiko.springbootsecurityweb.security.filter.JwtTokenFilter;
-import com.ihorpolataiko.springbootsecurityweb.security.filter.SecurityAuthenticationFilter;
+import com.ihorpolataiko.springbootsecurityweb.security.configurer.CustomSecurityConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -14,34 +13,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
 @EnableMethodSecurity // allow to specify access via annotations
 @Configuration
 public class SecurityConfig {
 
-  private final JwtTokenFilter jwtTokenFilter;
-
-  private final ApiKeyFilter apiKeyFilter;
-
-  private final SecurityAuthenticationFilter securityAuthenticationFilter;
-
   private final AuthenticationEntryPoint authenticationEntryPoint;
 
   private final AccessDeniedHandler accessDeniedHandler;
 
-  public SecurityConfig(
-      JwtTokenFilter jwtTokenFilter,
-      ApiKeyFilter apiKeyFilter,
-      SecurityAuthenticationFilter securityAuthenticationFilter,
-      AuthenticationEntryPoint authenticationEntryPoint,
-      AccessDeniedHandler accessDeniedHandler) {
-    this.jwtTokenFilter = jwtTokenFilter;
-    this.apiKeyFilter = apiKeyFilter;
+  private final CustomSecurityConfigurer customSecurityConfigurer;
 
-    this.securityAuthenticationFilter = securityAuthenticationFilter;
+  public SecurityConfig(
+      AuthenticationEntryPoint authenticationEntryPoint,
+      AccessDeniedHandler accessDeniedHandler,
+      CustomSecurityConfigurer customSecurityConfigurer) {
+
     this.authenticationEntryPoint = authenticationEntryPoint;
     this.accessDeniedHandler = accessDeniedHandler;
+    this.customSecurityConfigurer = customSecurityConfigurer;
   }
 
   @Bean
@@ -52,9 +42,9 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    http.addFilterBefore(securityAuthenticationFilter, AuthorizationFilter.class)
-        .addFilterBefore(jwtTokenFilter, SecurityAuthenticationFilter.class)
-        .addFilterBefore(apiKeyFilter, JwtTokenFilter.class)
+    http
+        // Register our custom security configurer
+        .with(customSecurityConfigurer, Customizer.withDefaults())
         .authorizeHttpRequests(
             mather ->
                 mather

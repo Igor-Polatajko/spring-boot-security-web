@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
     String apiKey = apiKeyAuthentication.apiKey();
 
     if (!apiKeysToClientIds.containsKey(apiKey)) {
-      return null;
+      throw new BadCredentialsException("API key is not valid");
     }
 
     String clientId = apiKeysToClientIds.get(apiKey);

@@ -3,6 +3,7 @@ package com.ihorpolataiko.springbootsecurityweb.exception;
 import com.ihorpolataiko.springbootsecurityweb.dto.error.ApiErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -18,15 +19,17 @@ public class RestExceptionControllerAdvice {
     return getApiErrorResponse(ex);
   }
 
-  @ExceptionHandler(NoAccessException.class)
-  @ResponseStatus(HttpStatus.FORBIDDEN)
-  public ApiErrorResponse handleNoAccessException(NoAccessException ex) {
-    return getApiErrorResponse(ex);
-  }
-
   @ExceptionHandler(AuthenticationException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ApiErrorResponse handleAuthenticationException(AuthenticationException ex) {
+    return getApiErrorResponse(ex);
+  }
+
+  // Spring Security method security (e.g., @PreAuthorize) is handled on the level of Spring
+  // interceptors, which means exception will be handled by ControllerAdvice
+  @ExceptionHandler(AccessDeniedException.class)
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  public ApiErrorResponse handleAccessDeniedException(AccessDeniedException ex) {
     return getApiErrorResponse(ex);
   }
 
