@@ -1,16 +1,17 @@
-package com.ihorpolataiko.springbootsecurityweb.security.filter;
+package com.ihorpolataiko.springbootsecurityweb.security.converter;
 
 import com.ihorpolataiko.springbootsecurityweb.common.AuthConstants;
 import com.ihorpolataiko.springbootsecurityweb.security.authentication.ApiKeyAuthentication;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ApiKeyFilter extends AbstractAuthenticationCreationFilter {
+public class ApiKeyAuthenticationConverter implements AuthenticationConverter {
 
   @Override
-  protected Authentication buildAuthentication(HttpServletRequest request) {
+  public Authentication convert(HttpServletRequest request) {
 
     String apiKey = request.getHeader(AuthConstants.API_KEY_AUTHORIZATION_HEADER);
 

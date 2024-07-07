@@ -22,7 +22,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     JwtAuthentication jwtAuthentication = (JwtAuthentication) authentication;
 
-    AuthUser authUser = jwtService.resolveJwtToken(jwtAuthentication.jwtToken());
+    AuthUser authUser = jwtService.resolveJwtToken(jwtAuthentication.getCredentials());
 
     return JwtAuthentication.authenticated(authUser);
   }

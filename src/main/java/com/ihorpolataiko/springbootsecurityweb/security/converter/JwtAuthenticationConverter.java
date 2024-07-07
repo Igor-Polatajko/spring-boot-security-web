@@ -1,17 +1,18 @@
-package com.ihorpolataiko.springbootsecurityweb.security.filter;
+package com.ihorpolataiko.springbootsecurityweb.security.converter;
 
 import com.ihorpolataiko.springbootsecurityweb.common.AuthConstants;
 import com.ihorpolataiko.springbootsecurityweb.security.authentication.JwtAuthentication;
 import com.ihorpolataiko.springbootsecurityweb.security.exception.TokenAuthenticationException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtTokenFilter extends AbstractAuthenticationCreationFilter {
+public class JwtAuthenticationConverter implements AuthenticationConverter {
 
   @Override
-  protected Authentication buildAuthentication(HttpServletRequest request) {
+  public Authentication convert(HttpServletRequest request) {
 
     String authenticationHeader = request.getHeader(AuthConstants.JWT_AUTHORIZATION_HEADER);
 

@@ -1,8 +1,7 @@
 package com.ihorpolataiko.springbootsecurityweb.config;
 
-import com.ihorpolataiko.springbootsecurityweb.security.filter.ApiKeyFilter;
-import com.ihorpolataiko.springbootsecurityweb.security.filter.JwtTokenFilter;
-import com.ihorpolataiko.springbootsecurityweb.security.filter.SecurityAuthenticationFilter;
+import com.ihorpolataiko.springbootsecurityweb.security.filter.ApiKeyAuthenticationFilter;
+import com.ihorpolataiko.springbootsecurityweb.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,26 +19,21 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 @Configuration
 public class SecurityConfig {
 
-  private final JwtTokenFilter jwtTokenFilter;
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-  private final ApiKeyFilter apiKeyFilter;
-
-  private final SecurityAuthenticationFilter securityAuthenticationFilter;
+  private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
 
   private final AuthenticationEntryPoint authenticationEntryPoint;
 
   private final AccessDeniedHandler accessDeniedHandler;
 
   public SecurityConfig(
-      JwtTokenFilter jwtTokenFilter,
-      ApiKeyFilter apiKeyFilter,
-      SecurityAuthenticationFilter securityAuthenticationFilter,
+      JwtAuthenticationFilter jwtAuthenticationFilter,
+      ApiKeyAuthenticationFilter apiKeyAuthenticationFilter,
       AuthenticationEntryPoint authenticationEntryPoint,
       AccessDeniedHandler accessDeniedHandler) {
-    this.jwtTokenFilter = jwtTokenFilter;
-    this.apiKeyFilter = apiKeyFilter;
-
-    this.securityAuthenticationFilter = securityAuthenticationFilter;
+    this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    this.apiKeyAuthenticationFilter = apiKeyAuthenticationFilter;
     this.authenticationEntryPoint = authenticationEntryPoint;
     this.accessDeniedHandler = accessDeniedHandler;
   }
@@ -52,9 +46,8 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    http.addFilterBefore(securityAuthenticationFilter, AuthorizationFilter.class)
-        .addFilterBefore(jwtTokenFilter, SecurityAuthenticationFilter.class)
-        .addFilterBefore(apiKeyFilter, JwtTokenFilter.class)
+    http.addFilterBefore(jwtAuthenticationFilter, AuthorizationFilter.class)
+        .addFilterBefore(apiKeyAuthenticationFilter, AuthorizationFilter.class)
         .authorizeHttpRequests(
             mather ->
                 mather
@@ -82,4 +75,23 @@ public class SecurityConfig {
 
     return http.build();
   }
+
+  //
+  //  If you need just one authentication filter,
+  //  you may simpy register a bean of AuthenticationFilter type
+  //
+  //  @Bean
+  //  AuthenticationFilter authenticationFilter(AuthenticationManager authenticationManager,
+  // AuthenticationConverter authenticationConverter,
+  // AuthenticationEntryPoint authenticationEntryPoint) {
+  //
+  //    AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager,
+  // authenticationConverter);
+  //
+  //    authenticationFilter.setSuccessHandler((request, response, authentication) -> {});
+  //
+  //    setFailureHandler(authenticationEntryPoint::commence);
+  //
+  //    return authenticationFilter;
+  //  }
 }
