@@ -65,14 +65,21 @@ public class CustomSecurityConfigurer
 
     AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
 
-    // Also, let's set the authentication event publisher so that we can receive
-    // events on successful and failed authentication attempts
-    // It's completely optional: if we do not set the publisher
-    // it will default to NullEventPublisher implementation that does not publish events
-    ((ProviderManager) authenticationManager)
-        .setAuthenticationEventPublisher(
-            new DefaultAuthenticationEventPublisher(applicationEventPublisher));
+    configureEventPublisher(authenticationManager);
 
     securityAuthenticationFilter.setAuthenticationManager(authenticationManager);
+  }
+
+  // Also, let's set the authentication event publisher so that we can receive
+  // events on successful and failed authentication attempts
+  // It's completely optional: if we do not set the publisher
+  // it will default to NullEventPublisher implementation that does not publish events
+  private void configureEventPublisher(AuthenticationManager authenticationManager) {
+
+    if (authenticationManager instanceof ProviderManager) {
+      ((ProviderManager) authenticationManager)
+          .setAuthenticationEventPublisher(
+              new DefaultAuthenticationEventPublisher(applicationEventPublisher));
+    }
   }
 }
