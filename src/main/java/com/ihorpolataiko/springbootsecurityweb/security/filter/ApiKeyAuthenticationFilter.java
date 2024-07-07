@@ -4,9 +4,7 @@ import com.ihorpolataiko.springbootsecurityweb.security.converter.ApiKeyAuthenti
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFilter;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ApiKeyAuthenticationFilter extends AuthenticationFilter {
 
   public ApiKeyAuthenticationFilter(
