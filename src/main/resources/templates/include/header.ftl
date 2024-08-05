@@ -39,7 +39,6 @@
     <ul class="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="/items/my">My items</a></li>
-        <li><a href="/items/admin">Admin</a></li>
     </ul>
     <a class="logout-button" href="/logout">Log out</a>
 </div>

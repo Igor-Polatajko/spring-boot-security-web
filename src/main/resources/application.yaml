@@ -3,17 +3,20 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://localhost:3306/spring_boot_security_web
+    url: jdbc:mysql://localhost:3306/spring_boot_security_web_oauth
     username: root
     password: root
   freemarker:
     template-loader-path: classpath:/templates/
     suffix: .ftl
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: ${CLIENT_ID}
+            clientSecret: ${CLIENT_SECRET}
 
 springdoc:
   swagger-ui:
     path=/swagger-ui.html
-
-admin.default:
-  username: admin
-  password: admin
