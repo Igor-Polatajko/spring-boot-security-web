@@ -6,8 +6,6 @@ import com.ihorpolataiko.springbootsecurityweb.entity.UserEntity;
 import com.ihorpolataiko.springbootsecurityweb.exception.NotFoundException;
 import com.ihorpolataiko.springbootsecurityweb.mapper.UserMapper;
 import com.ihorpolataiko.springbootsecurityweb.repository.UserRepository;
-import com.ihorpolataiko.springbootsecurityweb.security.exception.ApplicationAuthenticationException;
-import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,34 +41,24 @@ public class UserService {
     this.passwordEncoder = passwordEncoder;
   }
 
-  public UserResponse createUser(UserCreateRequest userCreateRequest) {
+  public UserResponse syncUser(UserSyncRequest userSyncRequest) {
 
-    UserEntity userEntity = new UserEntity();
-    userEntity.setUsername(userCreateRequest.username());
-    userEntity.setPasswordHash(passwordEncoder.encode(userCreateRequest.password()));
-    userEntity.setFirstName(userCreateRequest.firstName());
-    userEntity.setLastName(userCreateRequest.lastName());
-    userEntity.setRoles(Set.of(Role.ROLE_USER));
-    userEntity.setActive(true);
+    UserEntity userEntity =
+        userRepository
+            .findById(userSyncRequest.userId())
+            .orElseGet(
+                () -> {
+                  UserEntity newUserEntity = new UserEntity();
+                  newUserEntity.setId(userSyncRequest.userId());
+                  newUserEntity.setUsername(userSyncRequest.username());
+                  newUserEntity.setFirstName(userSyncRequest.firstName());
+                  newUserEntity.setLastName(userSyncRequest.lastName());
+                  newUserEntity.setRoles(Set.of(Role.ROLE_USER));
+                  newUserEntity.setActive(true);
+                  return userRepository.save(newUserEntity);
+                });
 
-    UserEntity savedEntity = userRepository.save(userEntity);
-
-    return userMapper.toResponse(savedEntity);
-  }
-
-  public void changeUserPassword(
-      UserPasswordUpdateRequest passwordUpdateRequest, AuthUser authUser) {
-
-    UserEntity userEntity = getUserEntity(authUser.userId());
-
-    if (!passwordEncoder.matches(
-        passwordUpdateRequest.oldPassword(), userEntity.getPasswordHash())) {
-      throw new ApplicationAuthenticationException("Old password is incorrect");
-    }
-
-    userEntity.setPasswordHash(passwordEncoder.encode(passwordUpdateRequest.newPassword()));
-
-    userRepository.save(userEntity);
+    return userMapper.toResponse(userEntity);
   }
 
   public UserResponse updateUser(String userId, UserUpdateRequest userUpdateRequest) {
@@ -90,14 +78,6 @@ public class UserService {
 
     UserEntity userEntity = getUserEntity(userId);
     return userMapper.toResponse(userEntity);
-  }
-
-  public UserResponseWithCredentials getUserCredentialsByUsername(String username) {
-
-    UserEntity userEntity =
-        userRepository.findByUsername(username).orElseThrow(NotFoundException::new);
-    return new UserResponseWithCredentials(
-        userMapper.toResponse(userEntity), userEntity.getPasswordHash());
   }
 
   public Page<UserResponse> listUsers(Pageable pageable) {
@@ -130,28 +110,6 @@ public class UserService {
 
     UserEntity updatedEntity = userRepository.save(userEntity);
     return userMapper.toResponse(updatedEntity);
-  }
-
-  public void createDefaultAdminIfNotExist() {
-
-    boolean anyAdminExist = userRepository.isAnyAdminExist();
-
-    if (anyAdminExist) {
-      log.info("Admin already exist. Skipping creation of default admin user");
-      return;
-    }
-
-    UserEntity userEntity = new UserEntity();
-    userEntity.setUsername(defaultAdminUsername);
-    userEntity.setPasswordHash(passwordEncoder.encode(defaultAdminPassword));
-    userEntity.setFirstName("Admin");
-    userEntity.setLastName("Admin");
-    userEntity.setRoles(Set.of(Role.ROLE_ADMIN));
-    userEntity.setActive(true);
-
-    UserEntity savedUser = userRepository.save(userEntity);
-
-    log.info("Default admin user was created with id={}", savedUser.getId());
   }
 
   private UserEntity getUserEntity(String userId) {

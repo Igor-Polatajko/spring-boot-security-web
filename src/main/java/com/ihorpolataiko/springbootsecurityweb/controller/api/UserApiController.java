@@ -1,8 +1,6 @@
 package com.ihorpolataiko.springbootsecurityweb.controller.api;
 
 import com.ihorpolataiko.springbootsecurityweb.common.OpenApiConstants;
-import com.ihorpolataiko.springbootsecurityweb.dto.user.UserCreateRequest;
-import com.ihorpolataiko.springbootsecurityweb.dto.user.UserPasswordUpdateRequest;
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponse;
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserUpdateRequest;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
@@ -24,22 +22,6 @@ public class UserApiController {
 
   public UserApiController(UserService userService) {
     this.userService = userService;
-  }
-
-  @PreAuthorize("permitAll()")
-  @PostMapping
-  public UserResponse createUser(@RequestBody UserCreateRequest userCreateRequest) {
-
-    return userService.createUser(userCreateRequest);
-  }
-
-  @PreAuthorize("isAuthenticated()")
-  @PostMapping("/change-password")
-  @SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
-  public void changeUserPassword(
-      @AuthenticationPrincipal AuthUser authUser,
-      @RequestBody UserPasswordUpdateRequest passwordUpdateRequest) {
-    userService.changeUserPassword(passwordUpdateRequest, authUser);
   }
 
   @PreAuthorize("isAuthenticated() && #userId == authentication.principal.userId")

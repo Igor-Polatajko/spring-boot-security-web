@@ -9,6 +9,13 @@ spring:
   freemarker:
     template-loader-path: classpath:/templates/
     suffix: .ftl
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: ${CLIENT_ID}
+            clientSecret: ${CLIENT_SECRET}
 
 springdoc:
   swagger-ui:
