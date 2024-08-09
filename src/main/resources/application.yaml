@@ -24,3 +24,11 @@ springdoc:
 admin.default:
   username: admin
   password: admin
+
+jwt:
+  signing-secret: some-secret
+
+api-key:
+  clients:
+    client-a: abc
+    client-b: 111

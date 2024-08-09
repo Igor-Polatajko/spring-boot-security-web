@@ -26,6 +26,8 @@ public class UserEntity {
 
   private Boolean active;
 
+  private String passwordHash;
+
   private ZonedDateTime createdDate;
 
   private ZonedDateTime updatedDate;

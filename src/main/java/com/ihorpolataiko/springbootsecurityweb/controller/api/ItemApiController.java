@@ -7,6 +7,7 @@ import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import com.ihorpolataiko.springbootsecurityweb.service.ItemService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/items")
-@SecurityRequirement(name = OpenApiConstants.BASIC_SECURITY_REQUIREMENT)
+@SecurityRequirements({
+  @SecurityRequirement(name = OpenApiConstants.BEARER_TOKEN_SECURITY_REQUIREMENT),
+  @SecurityRequirement(name = OpenApiConstants.API_KEY_SECURITY_REQUIREMENT)
+})
 public class ItemApiController {
 
   private final ItemService itemService;

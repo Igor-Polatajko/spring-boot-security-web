@@ -39,7 +39,7 @@ public class CustomOauthUserService extends DefaultOAuth2UserService {
                 firstAndLastNames.getLeft(),
                 firstAndLastNames.getRight()));
 
-    return new AuthUser(userResponse.id(), userResponse.roles());
+    return new AuthUser(userResponse.id(), username, userResponse.roles(), null);
   }
 
   private Pair<String, String> toFirstAndLastName(String name) {
