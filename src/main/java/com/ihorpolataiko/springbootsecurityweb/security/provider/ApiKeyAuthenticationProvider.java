@@ -4,6 +4,7 @@ import com.ihorpolataiko.springbootsecurityweb.common.Role;
 import com.ihorpolataiko.springbootsecurityweb.config.properties.ApiKeyClientsProperties;
 import com.ihorpolataiko.springbootsecurityweb.security.authentication.ApiKeyAuthentication;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
+import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserType;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,7 +39,7 @@ public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
     }
 
     String clientId = apiKeysToClientIds.get(apiKey);
-    AuthUser authUser = new AuthUser(clientId, List.of(Role.ROLE_ADMIN));
+    AuthUser authUser = new AuthUser(clientId, List.of(Role.ROLE_ADMIN), AuthUserType.APPLICATION);
     return ApiKeyAuthentication.authenticated(authUser);
   }
 
