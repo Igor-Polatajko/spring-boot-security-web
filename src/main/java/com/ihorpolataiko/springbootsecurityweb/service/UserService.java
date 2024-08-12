@@ -8,37 +8,21 @@ import com.ihorpolataiko.springbootsecurityweb.mapper.UserMapper;
 import com.ihorpolataiko.springbootsecurityweb.repository.UserRepository;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class UserService {
 
-  private final String defaultAdminUsername;
-
-  private final String defaultAdminPassword;
-
   private final UserRepository userRepository;
 
   private final UserMapper userMapper;
 
-  private final PasswordEncoder passwordEncoder;
-
-  public UserService(
-      @Value("${admin.default.username}") String defaultAdminUsername,
-      @Value("${admin.default.password}") String defaultAdminPassword,
-      UserRepository userRepository,
-      UserMapper userMapper,
-      PasswordEncoder passwordEncoder) {
-    this.defaultAdminUsername = defaultAdminUsername;
-    this.defaultAdminPassword = defaultAdminPassword;
+  public UserService(UserRepository userRepository, UserMapper userMapper) {
     this.userRepository = userRepository;
     this.userMapper = userMapper;
-    this.passwordEncoder = passwordEncoder;
   }
 
   public UserResponse syncUser(UserSyncRequest userSyncRequest) {

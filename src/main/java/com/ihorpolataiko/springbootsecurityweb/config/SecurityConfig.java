@@ -14,7 +14,9 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    http.oauth2Login(Customizer.withDefaults())
+    http
+        // enable oauth login (brings OAuth2LoginAuthenticationFilter)
+        .oauth2Login(Customizer.withDefaults())
         // allow public access to the home page
         .authorizeHttpRequests(mather -> mather.requestMatchers("/").permitAll())
         // deny requests to API for this example
