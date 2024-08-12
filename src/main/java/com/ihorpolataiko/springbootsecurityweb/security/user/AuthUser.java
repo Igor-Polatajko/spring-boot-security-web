@@ -11,7 +11,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 public record AuthUser(
-    String userId, String username, List<Role> roles, @Nullable String passwordHash)
+    String userId,
+    String username,
+    List<Role> roles,
+    @Nullable String passwordHash,
+    AuthUserType authUserType)
     implements OAuth2User, UserDetails {
 
   @Override
@@ -56,5 +60,9 @@ public record AuthUser(
   @Override
   public String getName() {
     return userId;
+  }
+
+  public boolean isInternalUser() {
+    return authUserType == AuthUserType.INTERNAL;
   }
 }

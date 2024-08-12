@@ -2,6 +2,7 @@ package com.ihorpolataiko.springbootsecurityweb.security.service;
 
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponseWithCredentials;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
+import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserType;
 import com.ihorpolataiko.springbootsecurityweb.service.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,6 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         userCredentialsByUsername.userResponse().id(),
         userCredentialsByUsername.userResponse().username(),
         userCredentialsByUsername.userResponse().roles(),
-        userCredentialsByUsername.passwordHash());
+        userCredentialsByUsername.passwordHash(),
+        AuthUserType.INTERNAL);
   }
 }

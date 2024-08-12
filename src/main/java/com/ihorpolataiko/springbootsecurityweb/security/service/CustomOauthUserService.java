@@ -3,6 +3,7 @@ package com.ihorpolataiko.springbootsecurityweb.security.service;
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponse;
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserSyncRequest;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
+import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserType;
 import com.ihorpolataiko.springbootsecurityweb.service.UserService;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -39,7 +40,8 @@ public class CustomOauthUserService extends DefaultOAuth2UserService {
                 firstAndLastNames.getLeft(),
                 firstAndLastNames.getRight()));
 
-    return new AuthUser(userResponse.id(), username, userResponse.roles(), null);
+    return new AuthUser(
+        userResponse.id(), username, userResponse.roles(), null, AuthUserType.OAUTH);
   }
 
   private Pair<String, String> toFirstAndLastName(String name) {

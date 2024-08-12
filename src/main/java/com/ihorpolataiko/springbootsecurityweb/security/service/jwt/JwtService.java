@@ -8,6 +8,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ihorpolataiko.springbootsecurityweb.common.Role;
 import com.ihorpolataiko.springbootsecurityweb.security.exception.TokenAuthenticationException;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
+import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserType;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +41,7 @@ public class JwtService {
       List<Role> roles = decodedJWT.getClaim(ROLES_CLAIM).asList(Role.class);
       String username = decodedJWT.getClaim(USERNAME_CLAIM).asString();
 
-      return new AuthUser(userId, username, roles, null);
+      return new AuthUser(userId, username, roles, null, AuthUserType.INTERNAL);
     } catch (JWTVerificationException exception) {
       throw new TokenAuthenticationException("JWT is not valid");
     }

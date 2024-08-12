@@ -81,11 +81,12 @@ public class UserService {
   public void changeUserPassword(
       UserPasswordUpdateRequest passwordUpdateRequest, AuthUser authUser) {
 
-    UserEntity userEntity = getUserEntity(authUser.userId());
-
-    if (userEntity.getPasswordHash() == null) {
-      throw new ApplicationAuthenticationException("Password cannot be changed for OAuth user");
+    if (!authUser.isInternalUser()) {
+      throw new ApplicationAuthenticationException(
+          "Password can be updated only for internal users");
     }
+
+    UserEntity userEntity = getUserEntity(authUser.userId());
 
     if (!passwordEncoder.matches(
         passwordUpdateRequest.oldPassword(), userEntity.getPasswordHash())) {

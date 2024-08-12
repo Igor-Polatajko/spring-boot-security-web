@@ -7,6 +7,7 @@ import com.ihorpolataiko.springbootsecurityweb.security.dto.TokenDto;
 import com.ihorpolataiko.springbootsecurityweb.security.exception.ApplicationAuthenticationException;
 import com.ihorpolataiko.springbootsecurityweb.security.service.jwt.JwtService;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
+import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,12 @@ public class AuthService {
 
     UserResponse userResponse = userCredentials.userResponse();
     AuthUser authUser =
-        new AuthUser(userResponse.id(), userResponse.username(), userResponse.roles(), null);
+        new AuthUser(
+            userResponse.id(),
+            userResponse.username(),
+            userResponse.roles(),
+            null,
+            AuthUserType.INTERNAL);
 
     String jwtToken = jwtService.createJwtToken(authUser);
 
