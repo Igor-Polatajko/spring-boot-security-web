@@ -1,8 +1,8 @@
 package com.ihorpolataiko.springbootsecurityweb.config;
 
-import com.ihorpolataiko.springbootsecurityweb.security.configurer.ApiKeyAuthenticationConfigurer;
-import com.ihorpolataiko.springbootsecurityweb.security.configurer.JwtAuthenticationConfigurer;
-import com.ihorpolataiko.springbootsecurityweb.security.service.CustomUserDetailsService;
+import com.ihorpolataiko.springbootsecurityweb.security.apikey.ApiKeyAuthenticationConfigurer;
+import com.ihorpolataiko.springbootsecurityweb.security.form.CustomUserDetailsService;
+import com.ihorpolataiko.springbootsecurityweb.security.jwt.JwtAuthenticationConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

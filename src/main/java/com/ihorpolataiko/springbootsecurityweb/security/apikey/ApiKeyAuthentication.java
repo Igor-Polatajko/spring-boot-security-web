@@ -1,4 +1,4 @@
-package com.ihorpolataiko.springbootsecurityweb.security.authentication;
+package com.ihorpolataiko.springbootsecurityweb.security.apikey;
 
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import java.util.Collection;

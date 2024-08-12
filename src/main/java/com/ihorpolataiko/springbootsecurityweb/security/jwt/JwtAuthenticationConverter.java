@@ -1,8 +1,7 @@
-package com.ihorpolataiko.springbootsecurityweb.security.converter;
+package com.ihorpolataiko.springbootsecurityweb.security.jwt;
 
 import com.ihorpolataiko.springbootsecurityweb.common.AuthConstants;
-import com.ihorpolataiko.springbootsecurityweb.security.authentication.JwtAuthentication;
-import com.ihorpolataiko.springbootsecurityweb.security.exception.TokenAuthenticationException;
+import com.ihorpolataiko.springbootsecurityweb.security.jwt.exception.TokenAuthenticationException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationConverter;

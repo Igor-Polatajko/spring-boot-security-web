@@ -1,7 +1,6 @@
-package com.ihorpolataiko.springbootsecurityweb.security.converter;
+package com.ihorpolataiko.springbootsecurityweb.security.apikey;
 
 import com.ihorpolataiko.springbootsecurityweb.common.AuthConstants;
-import com.ihorpolataiko.springbootsecurityweb.security.authentication.ApiKeyAuthentication;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationConverter;

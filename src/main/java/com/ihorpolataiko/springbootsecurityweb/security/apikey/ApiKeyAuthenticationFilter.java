@@ -1,18 +1,17 @@
-package com.ihorpolataiko.springbootsecurityweb.security.filter;
+package com.ihorpolataiko.springbootsecurityweb.security.apikey;
 
-import com.ihorpolataiko.springbootsecurityweb.security.converter.JwtAuthenticationConverter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 
-public class JwtAuthenticationFilter extends AuthenticationFilter {
+public class ApiKeyAuthenticationFilter extends AuthenticationFilter {
 
-  public JwtAuthenticationFilter(
+  public ApiKeyAuthenticationFilter(
       AuthenticationManager authenticationManager,
-      JwtAuthenticationConverter jwtAuthenticationConverter,
+      ApiKeyAuthenticationConverter apiKeyAuthenticationConverter,
       AuthenticationEntryPoint authenticationEntryPoint) {
 
-    super(authenticationManager, jwtAuthenticationConverter);
+    super(authenticationManager, apiKeyAuthenticationConverter);
 
     // Beware, that the default success handler in AuthenticationFilter will do a redirect to '/'
     // If you encounter a redirect loop problem during a similar implementation

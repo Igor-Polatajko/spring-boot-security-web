@@ -1,4 +1,4 @@
-package com.ihorpolataiko.springbootsecurityweb.security.service;
+package com.ihorpolataiko.springbootsecurityweb.security.oauth;
 
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponse;
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserSyncRequest;

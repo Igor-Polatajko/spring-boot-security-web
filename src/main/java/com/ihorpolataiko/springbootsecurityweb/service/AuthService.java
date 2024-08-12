@@ -2,10 +2,10 @@ package com.ihorpolataiko.springbootsecurityweb.service;
 
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponse;
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponseWithCredentials;
-import com.ihorpolataiko.springbootsecurityweb.security.dto.LoginDto;
-import com.ihorpolataiko.springbootsecurityweb.security.dto.TokenDto;
 import com.ihorpolataiko.springbootsecurityweb.security.exception.ApplicationAuthenticationException;
-import com.ihorpolataiko.springbootsecurityweb.security.service.jwt.JwtService;
+import com.ihorpolataiko.springbootsecurityweb.security.jwt.JwtService;
+import com.ihorpolataiko.springbootsecurityweb.security.jwt.dto.LoginDto;
+import com.ihorpolataiko.springbootsecurityweb.security.jwt.dto.TokenDto;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserType;
 import org.springframework.security.crypto.password.PasswordEncoder;

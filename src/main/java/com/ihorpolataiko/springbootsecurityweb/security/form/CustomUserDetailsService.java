@@ -1,4 +1,4 @@
-package com.ihorpolataiko.springbootsecurityweb.security.service;
+package com.ihorpolataiko.springbootsecurityweb.security.form;
 
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponseWithCredentials;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;

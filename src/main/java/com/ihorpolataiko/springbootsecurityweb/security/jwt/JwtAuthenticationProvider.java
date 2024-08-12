@@ -1,7 +1,5 @@
-package com.ihorpolataiko.springbootsecurityweb.security.provider;
+package com.ihorpolataiko.springbootsecurityweb.security.jwt;
 
-import com.ihorpolataiko.springbootsecurityweb.security.authentication.JwtAuthentication;
-import com.ihorpolataiko.springbootsecurityweb.security.service.jwt.JwtService;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;

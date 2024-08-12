@@ -1,8 +1,5 @@
-package com.ihorpolataiko.springbootsecurityweb.security.configurer;
+package com.ihorpolataiko.springbootsecurityweb.security.apikey;
 
-import com.ihorpolataiko.springbootsecurityweb.security.converter.ApiKeyAuthenticationConverter;
-import com.ihorpolataiko.springbootsecurityweb.security.filter.ApiKeyAuthenticationFilter;
-import com.ihorpolataiko.springbootsecurityweb.security.provider.ApiKeyAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;

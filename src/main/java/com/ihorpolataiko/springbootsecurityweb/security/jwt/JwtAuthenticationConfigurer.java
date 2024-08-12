@@ -1,8 +1,5 @@
-package com.ihorpolataiko.springbootsecurityweb.security.configurer;
+package com.ihorpolataiko.springbootsecurityweb.security.jwt;
 
-import com.ihorpolataiko.springbootsecurityweb.security.converter.JwtAuthenticationConverter;
-import com.ihorpolataiko.springbootsecurityweb.security.filter.JwtAuthenticationFilter;
-import com.ihorpolataiko.springbootsecurityweb.security.provider.JwtAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;

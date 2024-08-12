@@ -1,4 +1,4 @@
-package com.ihorpolataiko.springbootsecurityweb.security.exception;
+package com.ihorpolataiko.springbootsecurityweb.security.jwt.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

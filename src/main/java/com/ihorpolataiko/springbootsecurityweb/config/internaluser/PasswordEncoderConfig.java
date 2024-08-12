@@ -1,4 +1,4 @@
-package com.ihorpolataiko.springbootsecurityweb.config;
+package com.ihorpolataiko.springbootsecurityweb.config.internaluser;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

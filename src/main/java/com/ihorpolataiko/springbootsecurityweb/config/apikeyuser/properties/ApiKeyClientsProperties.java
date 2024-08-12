@@ -1,4 +1,4 @@
-package com.ihorpolataiko.springbootsecurityweb.config.properties;
+package com.ihorpolataiko.springbootsecurityweb.config.apikeyuser.properties;
 
 import java.util.Map;
 import lombok.Data;

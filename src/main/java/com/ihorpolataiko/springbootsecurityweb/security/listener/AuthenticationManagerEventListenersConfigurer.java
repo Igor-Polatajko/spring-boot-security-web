@@ -1,4 +1,4 @@
-package com.ihorpolataiko.springbootsecurityweb.security.configurer;
+package com.ihorpolataiko.springbootsecurityweb.security.listener;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;

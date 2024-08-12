@@ -1,8 +1,7 @@
-package com.ihorpolataiko.springbootsecurityweb.security.provider;
+package com.ihorpolataiko.springbootsecurityweb.security.apikey;
 
 import com.ihorpolataiko.springbootsecurityweb.common.Role;
-import com.ihorpolataiko.springbootsecurityweb.config.properties.ApiKeyClientsProperties;
-import com.ihorpolataiko.springbootsecurityweb.security.authentication.ApiKeyAuthentication;
+import com.ihorpolataiko.springbootsecurityweb.config.apikeyuser.properties.ApiKeyClientsProperties;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserType;
 import java.util.List;

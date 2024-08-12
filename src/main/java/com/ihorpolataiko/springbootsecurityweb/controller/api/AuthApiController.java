@@ -1,7 +1,7 @@
 package com.ihorpolataiko.springbootsecurityweb.controller.api;
 
-import com.ihorpolataiko.springbootsecurityweb.security.dto.LoginDto;
-import com.ihorpolataiko.springbootsecurityweb.security.dto.TokenDto;
+import com.ihorpolataiko.springbootsecurityweb.security.jwt.dto.LoginDto;
+import com.ihorpolataiko.springbootsecurityweb.security.jwt.dto.TokenDto;
 import com.ihorpolataiko.springbootsecurityweb.service.AuthService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;

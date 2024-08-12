@@ -1,4 +1,4 @@
-package com.ihorpolataiko.springbootsecurityweb.security.service.jwt;
+package com.ihorpolataiko.springbootsecurityweb.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -6,7 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ihorpolataiko.springbootsecurityweb.common.Role;
-import com.ihorpolataiko.springbootsecurityweb.security.exception.TokenAuthenticationException;
+import com.ihorpolataiko.springbootsecurityweb.security.jwt.exception.TokenAuthenticationException;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserType;
 import java.util.Date;
