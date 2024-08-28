@@ -1,18 +1,18 @@
-package com.ihorpolataiko.springbootsecurityweb.service;
+package com.ihorpolataiko.springbootsecurityweb.security.jwt;
 
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponse;
 import com.ihorpolataiko.springbootsecurityweb.dto.user.UserResponseWithCredentials;
 import com.ihorpolataiko.springbootsecurityweb.security.exception.ApplicationAuthenticationException;
-import com.ihorpolataiko.springbootsecurityweb.security.jwt.JwtService;
 import com.ihorpolataiko.springbootsecurityweb.security.jwt.dto.LoginDto;
 import com.ihorpolataiko.springbootsecurityweb.security.jwt.dto.TokenDto;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUser;
 import com.ihorpolataiko.springbootsecurityweb.security.user.AuthUserType;
+import com.ihorpolataiko.springbootsecurityweb.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthService {
+public class JwtAuthService {
 
   private final UserService userService;
 
@@ -20,7 +20,7 @@ public class AuthService {
 
   private final JwtService jwtService;
 
-  public AuthService(
+  public JwtAuthService(
       UserService userService, PasswordEncoder passwordEncoder, JwtService jwtService) {
     this.userService = userService;
     this.passwordEncoder = passwordEncoder;
