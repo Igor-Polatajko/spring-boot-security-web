@@ -19,11 +19,14 @@ public class JwtAuthenticationFilter extends AuthenticationFilter {
     // the solution will be to override the default success handler
     setSuccessHandler((request, response, authentication) -> {});
 
-    // Beware, that AuthenticationEntryPoint registered via DSL
+    // Beware, that AuthenticationEntryPoint, registered
+    // via HttpSecurity DSL (and used by ExceptionTranslationFilter),
     // will NOT be invoked while handling authentication exceptions
-    // thrown by the authentication manager inside of this filter,
-    // because the filter catch the exception and does not rethrow it,
-    // so we need to implement a failure handler
+    // thrown by the authentication manager inside of this filter
+    // because the AuthenticationFilter catches the exception
+    // and does not rethrow it, so we need to implement a failure handler,
+    // which, by the way, might simply rethrow an exception
+    // to let it be handled by ExceptionTranslationFilter
     setFailureHandler(authenticationEntryPoint::commence);
   }
 }
