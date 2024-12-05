@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     UserResponseWithCredentials userCredentialsByUsername =
         userService.getUserCredentialsByUsername(username);
 
-    return new AuthUser(
+    return AuthUser.create(
         userCredentialsByUsername.userResponse().id(),
         userCredentialsByUsername.userResponse().username(),
         userCredentialsByUsername.userResponse().roles(),

@@ -40,7 +40,7 @@ public class CustomOauthUserService extends DefaultOAuth2UserService {
                 firstAndLastNames.getLeft(),
                 firstAndLastNames.getRight()));
 
-    return new AuthUser(
+    return AuthUser.create(
         userResponse.id(), username, userResponse.roles(), null, AuthUserType.OAUTH);
   }
 

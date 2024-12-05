@@ -38,7 +38,7 @@ public class JwtAuthService {
 
     UserResponse userResponse = userCredentials.userResponse();
     AuthUser authUser =
-        new AuthUser(
+        AuthUser.create(
             userResponse.id(),
             userResponse.username(),
             userResponse.roles(),

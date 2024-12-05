@@ -14,9 +14,19 @@ public record AuthUser(
     String userId,
     String username,
     List<Role> roles,
-    @Nullable String passwordHash,
+    @Nullable PasswordHashWrapper passwordHash,
     AuthUserType authUserType)
     implements OAuth2User, UserDetails {
+
+  public static AuthUser create(
+      String userId,
+      String username,
+      List<Role> roles,
+      @Nullable String passwordHash,
+      AuthUserType authUserType) {
+    return new AuthUser(
+        userId, username, roles, new PasswordHashWrapper(passwordHash), authUserType);
+  }
 
   @Override
   public Map<String, Object> getAttributes() {
@@ -29,7 +39,7 @@ public record AuthUser(
 
   @Override
   public String getPassword() {
-    return passwordHash;
+    return passwordHash != null ? passwordHash.value : null;
   }
 
   @Override
@@ -64,5 +74,14 @@ public record AuthUser(
 
   public boolean isInternalUser() {
     return authUserType == AuthUserType.INTERNAL;
+  }
+
+  // This wrapper is dedicated to preventing writing password hash to logs
+  private record PasswordHashWrapper(String value) {
+
+    @Override
+    public String toString() {
+      return value == null ? null : "[PROTECTED]";
+    }
   }
 }

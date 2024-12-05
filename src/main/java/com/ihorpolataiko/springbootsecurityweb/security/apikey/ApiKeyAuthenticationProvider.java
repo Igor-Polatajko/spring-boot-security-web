@@ -39,7 +39,7 @@ public class ApiKeyAuthenticationProvider implements AuthenticationProvider {
 
     String clientId = apiKeysToClientIds.get(apiKey);
     AuthUser authUser =
-        new AuthUser(
+        AuthUser.create(
             clientId, "Application", List.of(Role.ROLE_ADMIN), null, AuthUserType.APPLICATION);
     return ApiKeyAuthentication.authenticated(authUser);
   }

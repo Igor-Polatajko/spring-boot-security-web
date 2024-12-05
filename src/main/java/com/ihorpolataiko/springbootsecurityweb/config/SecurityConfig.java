@@ -3,6 +3,7 @@ package com.ihorpolataiko.springbootsecurityweb.config;
 import com.ihorpolataiko.springbootsecurityweb.security.apikey.ApiKeyAuthenticationConfigurer;
 import com.ihorpolataiko.springbootsecurityweb.security.form.CustomUserDetailsService;
 import com.ihorpolataiko.springbootsecurityweb.security.jwt.JwtAuthenticationConfigurer;
+import com.ihorpolataiko.springbootsecurityweb.security.listener.AuthenticationManagerEventListenersConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,9 @@ public class SecurityConfig {
 
   private final JwtAuthenticationConfigurer jwtAuthenticationConfigurer;
 
+  private final AuthenticationManagerEventListenersConfigurer
+      authenticationManagerEventListenersConfigurer;
+
   private final AuthenticationEntryPoint authenticationEntryPoint;
 
   private final AccessDeniedHandler accessDeniedHandler;
@@ -32,10 +36,13 @@ public class SecurityConfig {
       CustomUserDetailsService customUserDetailsService,
       ApiKeyAuthenticationConfigurer apiKeyAuthenticationConfigurer,
       JwtAuthenticationConfigurer jwtAuthenticationConfigurer,
+      AuthenticationManagerEventListenersConfigurer authenticationManagerEventListenersConfigurer,
       AuthenticationEntryPoint authenticationEntryPoint,
       AccessDeniedHandler accessDeniedHandler) {
     this.apiKeyAuthenticationConfigurer = apiKeyAuthenticationConfigurer;
     this.jwtAuthenticationConfigurer = jwtAuthenticationConfigurer;
+    this.authenticationManagerEventListenersConfigurer =
+        authenticationManagerEventListenersConfigurer;
     this.authenticationEntryPoint = authenticationEntryPoint;
     this.accessDeniedHandler = accessDeniedHandler;
     this.customUserDetailsService = customUserDetailsService;
@@ -79,6 +86,7 @@ public class SecurityConfig {
     http.securityMatcher("/api/**")
         .with(apiKeyAuthenticationConfigurer, Customizer.withDefaults())
         .with(jwtAuthenticationConfigurer, Customizer.withDefaults())
+        .with(authenticationManagerEventListenersConfigurer, Customizer.withDefaults())
         .authorizeHttpRequests(
             matcher ->
                 matcher

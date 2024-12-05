@@ -41,7 +41,7 @@ public class JwtService {
       List<Role> roles = decodedJWT.getClaim(ROLES_CLAIM).asList(Role.class);
       String username = decodedJWT.getClaim(USERNAME_CLAIM).asString();
 
-      return new AuthUser(userId, username, roles, null, AuthUserType.INTERNAL);
+      return AuthUser.create(userId, username, roles, null, AuthUserType.INTERNAL);
     } catch (JWTVerificationException exception) {
       throw new TokenAuthenticationException("JWT is not valid");
     }
