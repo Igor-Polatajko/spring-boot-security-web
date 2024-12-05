@@ -1,6 +1,6 @@
 ## About
 
-### Simple authentication with Opaque token 
+### Simple [REST API] authentication with Opaque token
 #### [https://medium.com/@ihor.polataiko/spring-security-guide-part-2-simple-authentication-with-opaque-token-0417187f7e9e](https://medium.com/@ihor.polataiko/spring-security-guide-part-2-simple-authentication-with-opaque-token-0417187f7e9e)
 
 ## Requirements
