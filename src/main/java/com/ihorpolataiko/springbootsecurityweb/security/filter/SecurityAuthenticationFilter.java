@@ -42,8 +42,10 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
             .getByToken(authenticationHeader)
             .orElseThrow(() -> new TokenAuthenticationException("Token is not valid"));
 
+    UserAuthentication authentication = new UserAuthentication(authUser);
+
     SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-    securityContext.setAuthentication(new UserAuthentication(authUser));
+    securityContext.setAuthentication(authentication);
     SecurityContextHolder.setContext(securityContext);
 
     filterChain.doFilter(request, response);
