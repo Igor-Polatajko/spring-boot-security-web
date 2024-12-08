@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -41,7 +42,9 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
             .getByToken(authenticationHeader)
             .orElseThrow(() -> new TokenAuthenticationException("Token is not valid"));
 
-    SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(authUser));
+    SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+    securityContext.setAuthentication(new UserAuthentication(authUser));
+    SecurityContextHolder.setContext(securityContext);
 
     filterChain.doFilter(request, response);
   }
