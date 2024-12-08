@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,7 +20,10 @@ public abstract class AbstractAuthenticationCreationFilter extends OncePerReques
     Authentication builtAuthentication = buildAuthentication(request);
 
     if (builtAuthentication != null) {
-      SecurityContextHolder.getContext().setAuthentication(builtAuthentication);
+
+      SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+      securityContext.setAuthentication(builtAuthentication);
+      SecurityContextHolder.setContext(securityContext);
     }
 
     filterChain.doFilter(request, response);
