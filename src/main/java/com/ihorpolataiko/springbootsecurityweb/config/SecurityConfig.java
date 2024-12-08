@@ -11,6 +11,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -96,7 +97,8 @@ public class SecurityConfig {
                     .permitAll())
         .authorizeHttpRequests(matcher -> matcher.anyRequest().authenticated())
         .csrf(AbstractHttpConfigurer::disable)
-        .sessionManagement(AbstractHttpConfigurer::disable)
+        .sessionManagement(
+            configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .exceptionHandling(
             customizer ->
                 customizer
