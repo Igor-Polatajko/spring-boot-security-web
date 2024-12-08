@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -41,11 +42,14 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
       return;
     }
 
-    Authentication authentication =
+    Authentication authenticatedAuthentication =
         authenticationManager.authenticate(unauthenticatedAuthentication);
 
-    if (authentication != null) {
-      SecurityContextHolder.getContext().setAuthentication(authentication);
+    if (authenticatedAuthentication != null) {
+
+      SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+      securityContext.setAuthentication(authenticatedAuthentication);
+      SecurityContextHolder.setContext(securityContext);
     }
 
     filterChain.doFilter(request, response);
